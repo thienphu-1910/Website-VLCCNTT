@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import WebTitle from "./WebTitle";
 import ShieldLogo from "./ShieldLogo";
 import { useForm } from "react-hook-form";
@@ -22,9 +23,9 @@ const FormHeader = () => {
 const LoginForm = () => {
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      "userName": "tcpt1910",
-      "userPassword": "19102005"
-    }
+      userName: "tcpt1910",
+      userPassword: "19102005",
+    },
   });
 
   const onSubmit = (data) => {
@@ -34,7 +35,7 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-[#E5ECF6] border border-[#FFFCFC]/15 shadow-2xl h-90 w-80 
+      className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-90 w-80 
                   rounded-lg flex flex-col justify-start items-center gap-2
                   py-2 px-4 "
     >
@@ -80,13 +81,14 @@ const LoginForm = () => {
         </section>
       </main>
       <section className="relative w-full">
-        <button
+        <Link
+          to="/home"
           type="submit"
           className="bg-red-500 text-xl py-2 px-5 rounded-xl hover:shadow-md transition-all duration-300
                        active:outline-none text-white absolute right-0 hover:shadow-red-400"
         >
           Login
-        </button>
+        </Link>        
       </section>
     </form>
   );

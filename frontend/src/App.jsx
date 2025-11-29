@@ -7,13 +7,15 @@ import {
 import './App.css'
 import MainLayout from './layout/MainLayout';
 import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
 
 function App() {  
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
-        <Route path='/login' element={<LoginPage />} />
+        <Route index element={<LoginPage />} />
+        <Route path='/home' element={<HomePage />} />
       </Route>
     )
   );
