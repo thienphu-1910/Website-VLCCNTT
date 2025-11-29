@@ -46,7 +46,7 @@ const LoginForm = () => {
             htmlFor="username"
             className="text-left text-sm font-semibold bg-linear-to-r from-[#f80344] to-[#3952F5] bg-clip-text text-transparent"
           >
-            User Name
+            Username
           </label>
           <input
             {...register("userName", { required: true })}

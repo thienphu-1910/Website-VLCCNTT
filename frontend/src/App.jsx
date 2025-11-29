@@ -10,7 +10,6 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 
 function App() {  
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
