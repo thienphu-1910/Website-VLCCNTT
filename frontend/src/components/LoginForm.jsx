@@ -1,11 +1,10 @@
 import WebTitle from "./WebTitle";
 import ShieldLogo from "./ShieldLogo";
 import { useNavigate } from "react-router-dom";
-import ReactDOM from "react-dom";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const FormHeader = () => {
   return (
@@ -107,8 +106,6 @@ const LoginForm = () => {
           </button>
         </section>
       </form>
-
-      <ToastContainer />
     </>
   );
 };
