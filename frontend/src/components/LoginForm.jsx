@@ -150,7 +150,7 @@ const LoginForm = () => {
             </p>
           </div>
         </div>,
-        document.body // This attaches the div to the <body> tag
+        document.body 
       )}
     </>
   );
