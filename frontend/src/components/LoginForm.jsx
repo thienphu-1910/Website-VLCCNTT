@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { useForm } from "react-hook-form";
 
 const FormHeader = () => {
   return (
@@ -24,17 +25,18 @@ const FormHeader = () => {
 };
 
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { register, handleSubmit, getValues } = useForm({
+    defaultValues: {
+      userEmail: localStorage.getItem("email"),
+      userPassword: localStorage.getItem("password")
+    }
+  });
 
   const [toast, setToast] = useState({
     show: false,
     message: "",
     type: "",
-  });
-
-  const default_user_name = localStorage.getItem("username");
-  const default_password = localStorage.getItem("password");
+  });  
 
   const navigate = useNavigate();
 
@@ -50,29 +52,30 @@ const LoginForm = () => {
     }, 3000);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setToast({ show: false, message: "", type: "" });
-    localStorage.setItem("username", email);
-    localStorage.setItem("password", password);
+  const onSubmit = async () => {    
+    setToast({ show: false, message: "", type: "" });    
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userEmail = getValues('userEmail');
+      const userPassword = getValues('userPassword');
 
+      localStorage.setItem("email", userEmail);
+      localStorage.setItem("password", userPassword);
+
+      await signInWithEmailAndPassword(auth, userEmail, userPassword);
       showToast("Signed in successfully!", "success");
-
       setTimeout(() => {
         navigate("/home");
-      }, 1500);
+      }, 700);
     } catch (error) {
       console.error("Error signing in:", error);
       showToast("Failed to sign in.", "error");
     }
-  };
+  }
 
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-fit w-80 
                   rounded-3xl flex flex-col justify-start items-center gap-2
                   py-3 px-4 "
@@ -86,16 +89,14 @@ const LoginForm = () => {
             >
               Email
             </label>
-            <input
+            <input                            
               id="email"
               type="email"
               spellCheck="false"
               placeholder="Enter your email"
               className="w-full h-10 px-2 focus:outline-none rounded-lg bg-white transition-all duration-900 
-                       focus:shadow-lg focus:shadow-blue-300 caret-black placeholder:text-gray-500 text-black"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              //value={default_user_name}
+                       focus:shadow-lg focus:shadow-blue-300 caret-black placeholder:text-gray-500 text-black"              
+              {...register("userEmail", { required: true })}
             />
           </section>
           <section className="flex flex-col self-center gap-1 mt-2">
@@ -112,9 +113,7 @@ const LoginForm = () => {
               placeholder="Enter you password"
               className="w-full h-10 px-2 focus:outline-none rounded-lg bg-white transition-all duration-900 
                        focus:shadow-lg focus:shadow-blue-300 caret-black placeholder:text-gray-500 text-black"
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              //value={default_password}
+              {...register("userPassword", { required: true })}                                          
             />
           </section>
           <section className=" mt-1">
