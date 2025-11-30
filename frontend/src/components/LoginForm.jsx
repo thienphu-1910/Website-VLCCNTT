@@ -33,6 +33,9 @@ const LoginForm = () => {
     type: "",
   });
 
+  const default_user_name = localStorage.getItem("username");
+  const default_password = localStorage.getItem("password");
+
   const navigate = useNavigate();
 
   const showToast = (message, type) => {
@@ -50,7 +53,8 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setToast({ show: false, message: "", type: "" });
-
+    localStorage.setItem("username", email);
+    localStorage.setItem("password", password);
     try {
       await signInWithEmailAndPassword(auth, email, password);
 
@@ -69,16 +73,16 @@ const LoginForm = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-90 w-80 
+        className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-fit w-80 
                   rounded-3xl flex flex-col justify-start items-center gap-2
-                  py-2 px-4 "
+                  py-3 px-4 "
       >
         <FormHeader />
         <main className="w-full mt-5">
           <section className="flex flex-col self-center gap-1">
             <label
               htmlFor="email"
-              className="text-left text-sm font-semibold bg-linear-to-r from-[#f80344] to-[#3952F5] bg-clip-text text-transparent"
+              className="text-left text-md font-semibold bg-linear-to-r from-[#f80344] to-[#3952F5] bg-clip-text text-transparent"
             >
               Email
             </label>
@@ -91,12 +95,13 @@ const LoginForm = () => {
                        focus:shadow-lg focus:shadow-blue-300 caret-black placeholder:text-gray-500 text-black"
               onChange={(e) => setEmail(e.target.value)}
               required
+              //value={default_user_name}
             />
           </section>
           <section className="flex flex-col self-center gap-1 mt-2">
             <label
               htmlFor="password"
-              className="text-left text-sm font-semibold bg-linear-to-r from-[#f80344] to-[#3952F5] bg-clip-text text-transparent"
+              className="text-left text-md font-semibold bg-linear-to-r from-[#f80344] to-[#3952F5] bg-clip-text text-transparent"
             >
               Password
             </label>
@@ -109,6 +114,7 @@ const LoginForm = () => {
                        focus:shadow-lg focus:shadow-blue-300 caret-black placeholder:text-gray-500 text-black"
               onChange={(e) => setPassword(e.target.value)}
               required
+              //value={default_password}
             />
           </section>
           <section className=" mt-1">
@@ -117,11 +123,11 @@ const LoginForm = () => {
             </p>
           </section>
         </main>
-        <section className="relative w-full">
+        <section className="w-fit self-end">
           <button
             type="submit"
             className="bg-red-500 text-xl py-2 px-5 rounded-xl hover:shadow-md transition-all duration-300
-                       active:outline-none text-white absolute right-0 hover:shadow-red-400"
+                       active:outline-none text-white hover:shadow-red-400 hover:scale-102"
           >
             Login
           </button>

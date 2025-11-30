@@ -18,9 +18,9 @@ const Header = () => {
       const loadData = async () => {
         try {
           const res = await http.get(`/users`);
-          console.log(u.email);
+          console.log(u.email);                  
           if (isMounted) {
-            setUser(res.data[0]);
+            setUser(res.data.find((element) => element.email === u.email));
             console.log(res);
           }
         } catch (error) {

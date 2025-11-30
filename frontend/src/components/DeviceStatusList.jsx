@@ -34,13 +34,14 @@ const DeviceStatusList = ({ className = "" }) => {
   return (
     <div
       className={twMerge(
-        "w-full grid grid-cols-3 gap-5 justify-center justify-items-center",
+        "w-full grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5 justify-center justify-items-center",
         className
       )}
     >
       {Array.from({ length: 6 }, (v, i) => (
         <DeviceStatusCard key={i}/>
       ))}
+
     </div>
   );
 };
