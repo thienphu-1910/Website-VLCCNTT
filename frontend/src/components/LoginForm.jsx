@@ -1,11 +1,10 @@
 import WebTitle from "./WebTitle";
 import ShieldLogo from "./ShieldLogo";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { useForm } from "react-hook-form";
-import { showToast } from "react-toastify"
+import { toast } from "react-toastify";
 
 const FormHeader = () => {
   return (
@@ -31,17 +30,11 @@ const LoginForm = () => {
       userPassword: localStorage.getItem("password")
     }
   });
-
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "",
-  });  
+  
 
   const navigate = useNavigate();
 
-  const onSubmit = async () => {    
-    setToast({ show: false, message: "", type: "" });    
+  const onSubmit = async () => {        
     try {
       const userEmail = getValues('userEmail');
       const userPassword = getValues('userPassword');
@@ -50,7 +43,7 @@ const LoginForm = () => {
       localStorage.setItem("password", userPassword);
 
       await signInWithEmailAndPassword(auth, userEmail, userPassword);
-      showToast("Signed in successfully!", "success");
+      toast("Signed in successfully!", "success");
       setTimeout(() => {
         navigate("/home");
       }, 700);
