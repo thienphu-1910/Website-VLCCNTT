@@ -1,10 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signOut } from 'firebase/auth';
+import { auth } from "../config/firebase";
+import { ToastContainer, toast } from "react-toastify";
 
 const AvatarDropdown = () => {
   const navigate = useNavigate();
-  const onClick = () => {
-    navigate("/");
+  const onClick = async () => {
+    try {
+      await signOut(auth);
+      toast.success("Signed out successfully!", { position: "top-right", autoClose: 1500 });
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      toast.error("Error signing out: " + error.message, { position: "top-right", autoClose: 1500 });
+    }
+
   }
   return (
     <div className="h-fit w-30 bg-white absolute right-0 top-11 rounded-lg 
@@ -14,6 +26,7 @@ const AvatarDropdown = () => {
               onClick={() => onClick()}>
         Log out
       </button>
+      <ToastContainer />
     </div>
   );
 };
