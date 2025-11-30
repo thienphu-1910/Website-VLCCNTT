@@ -3,13 +3,13 @@
     {
       "id": 1,
       "name": "ViDuyDmm",
-      "email": "viduydmm@gmail.com",
+      "email": "viduydmm@gmail.com", 
       "avatar_url": "public/images/user1_avatar.jpeg"
     },
     {
       "id": 2,
       "name": "khoidmmm",
-      "email": "khoidmmm@gmail.com",
+      "email": "mikhoidmm@gmail.com",
       "avatar_url": "public/images/user2_avatar.jpeg"
     }
   ],

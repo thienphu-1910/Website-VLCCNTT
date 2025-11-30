@@ -1,10 +1,10 @@
 import WebTitle from "./WebTitle";
 import ShieldLogo from "./ShieldLogo";
 import { useNavigate } from "react-router-dom";
-import ReactDOM from "react-dom";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { toast } from "react-toastify";
 
 const FormHeader = () => {
   return (
@@ -33,39 +33,21 @@ const LoginForm = () => {
     type: "",
   });
 
-  const default_user_name = localStorage.getItem("username");
-  const default_password = localStorage.getItem("password");
-
   const navigate = useNavigate();
-
-  const showToast = (message, type) => {
-    setToast({
-      show: true,
-      message,
-      type,
-    });
-
-    setTimeout(() => {
-      setToast({ show: false, message: "", type: "" });
-    }, 3000);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setToast({ show: false, message: "", type: "" });
-    localStorage.setItem("username", email);
-    localStorage.setItem("password", password);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
 
-      showToast("Signed in successfully!", "success");
-
+      toast.success("Signed in successfully!", { position: "top-right", autoClose: 1500 });
       setTimeout(() => {
         navigate("/home");
       }, 1500);
     } catch (error) {
-      console.error("Error signing in:", error);
-      showToast("Failed to sign in.", "error");
+      toast.error("Failed to sign in.", { position: "top-right", autoClose: 1500 });
     }
   };
 
@@ -133,30 +115,6 @@ const LoginForm = () => {
           </button>
         </section>
       </form>
-
-      {toast.show &&
-        ReactDOM.createPortal(
-          <div
-            className={`fixed bottom-5 right-5 flex items-center gap-3 px-6 py-4 rounded-lg shadow-2xl z-9999 animate-bounce
-            ${
-              toast.type === "success"
-                ? "bg-green-600 text-white shadow-green-900/20 border border-green-500"
-                : "bg-red-600 text-white shadow-red-900/20 border border-red-500"
-            }`}
-            style={{ animation: "slideIn 0.5s ease-out" }} // Inline style for simple animation
-          >
-            <span className="text-2xl">
-              {toast.type === "success" ? "✅" : "⚠️"}
-            </span>
-            <div>
-              <h4 className="font-bold text-sm uppercase tracking-wider">
-                {toast.type === "success" ? "Success" : "Error"}
-              </h4>
-              <p className="text-sm font-medium opacity-90">{toast.message}</p>
-            </div>
-          </div>,
-          document.body // This attaches the div to the <body> tag
-        )}
     </>
   );
 };
