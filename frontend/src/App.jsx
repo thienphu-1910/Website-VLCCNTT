@@ -8,6 +8,7 @@ import './App.css'
 import MainLayout from './layout/MainLayout';
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import { ToastContainer } from "react-toastify";
 
 function App() {  
   const router = createBrowserRouter(
@@ -19,8 +20,11 @@ function App() {
     )
   );
 
-  return (    
-    <RouterProvider router={router} />            
+  return (  
+    <>
+      <ToastContainer />
+      <RouterProvider router={router} /> 
+    </>           
   );
 }
 
