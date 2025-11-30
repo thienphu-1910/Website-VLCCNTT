@@ -10,10 +10,8 @@ const AvatarDropdown = () => {
   const logOut = async () => {
     try {
       await signOut(auth);
-      toast.success("Signed out successfully!", { position: "top-right", autoClose: 1500 });
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      toast.success("Signed out successfully!", { position: "bottom-right", autoClose: 1500 });
+      navigate("/");
     } catch (error) {
       toast.error("Error signing out: " + error.message, { position: "top-right", autoClose: 1500 });
     }

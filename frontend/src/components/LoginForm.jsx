@@ -27,27 +27,21 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "",
-  });
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setToast({ show: false, message: "", type: "" });
+    e.preventDefault();    
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
 
-      toast.success("Signed in successfully!", { position: "top-right", autoClose: 1500 });
+      toast.success("Signed in successfully!", { position: "bottom-right", autoClose: 1500 });
       setTimeout(() => {
         navigate("/home");
       }, 1500);
     } catch (error) {
-      toast.error("Failed to sign in.", { position: "top-right", autoClose: 1500 });
+      console.log(error);
+      toast.error("Failed to sign in.", { position: "bottom-right", autoClose: 1500 });
     }
   };
 
