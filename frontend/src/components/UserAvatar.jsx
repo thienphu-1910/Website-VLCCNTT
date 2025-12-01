@@ -13,7 +13,7 @@ const AvatarDropdown = () => {
       toast.success("Signed out successfully!", { position: "bottom-right", autoClose: 1500 });
       navigate("/");
     } catch (error) {
-      toast.error("Error signing out: " + error.message, { position: "top-right", autoClose: 1500 });
+      toast.error("Error signing out: " + error.message, { position: "bottom-right", autoClose: 1500 });
     }
 
   }

@@ -42,8 +42,8 @@ const LoginForm = () => {
       localStorage.setItem("email", userEmail);
       localStorage.setItem("password", userPassword);
 
-      await signInWithEmailAndPassword(auth, userEmail, userPassword);
-      toast("Signed in successfully!", "success");
+      await signInWithEmailAndPassword(auth, userEmail, userPassword);      
+      toast.success("Signed in successfully", { position: "bottom-right", autoClose: 1500 });
       navigate("/home");
     } catch (error) {
       console.log(error);
