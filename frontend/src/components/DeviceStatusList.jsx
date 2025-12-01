@@ -44,7 +44,7 @@ const DeviceStatusList = ({ className = "" }) => {
   return (
     <div
       className={twMerge(
-        "w-full grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 justify-center justify-items-center",
+        "w-full mt-20 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 justify-center justify-items-center",
         className
       )}
     >
@@ -61,6 +61,7 @@ const DeviceStatusList = ({ className = "" }) => {
           <p>Normal</p>
         </div>
       </DeviceStatusCard>
+
       <DeviceStatusCard key={2} className="flex flex-col gap-5">
         <section className="w-full flex flex-row gap-2 items-center">
           <CiWavePulse1
@@ -84,7 +85,8 @@ const DeviceStatusList = ({ className = "" }) => {
           </div>
         </div>
       </DeviceStatusCard>
-      <DeviceStatusCard key={3} className="grid grid-cols-2">
+
+      <DeviceStatusCard key={3} className="grid grid-cols-2 gap-10">
         <div className="flex flex-col items-start gap-5">
           <section className="w-full flex flex-row gap-2 items-center">
             <CiTempHigh
@@ -112,12 +114,12 @@ const DeviceStatusList = ({ className = "" }) => {
           </div>
         </div>
       </DeviceStatusCard>
+
       <DeviceStatusCard
         key={4}
         className={
           "flex flex-col gap-5 group relative" +
-          (triggered &&
-            " bg-red-200/50 hover:bg-red-200/50 scale-102")
+          (triggered && " bg-red-200/50 hover:bg-red-200/50 scale-102")
         }
       >
         {triggered && (
@@ -156,6 +158,7 @@ const DeviceStatusList = ({ className = "" }) => {
           </p>
         </button>
       </DeviceStatusCard>
+
       <DeviceStatusCard key={5} className="flex flex-col gap-5 group">
         <section className="w-full flex flex-row gap-2 items-center">
           <GrDocumentSound
@@ -179,7 +182,11 @@ const DeviceStatusList = ({ className = "" }) => {
           </option>
         </select>
       </DeviceStatusCard>
-      <DeviceStatusCard key={6} className="flex flex-col gap-5 group overflow-auto">
+
+      <DeviceStatusCard
+        key={6}
+        className="flex flex-col gap-5 group overflow-auto"
+      >
         <section className="w-full flex flex-row gap-2 items-center">
           <HiOutlineLightBulb
             className="fill-none stroke-yellow-400 size-9 
@@ -188,9 +195,10 @@ const DeviceStatusList = ({ className = "" }) => {
           <h3 className="text-black font-bold text-lg">Tip</h3>
         </section>
         <div className=" text-sm text-left px-2 font-bold text-black/50 group-hover:text-black w-full h-fit py-1 bg-gray-400/20 group-hover:bg-gray-400/50 rounded-lg text-wrap">
-          Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết bạn nhé!
-          Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết bạn nhé!
-        </div>        
+          Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết bạn
+          nhé! Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết
+          bạn nhé!
+        </div>
       </DeviceStatusCard>
     </div>
   );

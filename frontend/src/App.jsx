@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./router/ProtectedRoute";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {  
   const router = createBrowserRouter(
@@ -18,6 +19,7 @@ function App() {
         <Route index element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path='/home' element={<HomePage />} />
+          <Route path='/history' element={<HistoryPage />} />
         </Route>
       </Route>
     )

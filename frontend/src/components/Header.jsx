@@ -57,17 +57,17 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full h-14 fixed top-0 left-0 right-0 bg-[#151136] py-2 px-4 flex flex-row justify-between items-center">
+    <header className="w-full h-14 z-50 fixed top-0 left-0 right-0 bg-[#151136] py-2 px-4 flex flex-row justify-between items-center">
       <section
         onClick={() => logoOnClick()}
         className="flex flex-row gap-2 h-full items-center w-fit cursor-pointer z-10"
       >
-        <ShieldLogo className="size-7" />
-        <WebTitle className="text-2xl" />
+        <ShieldLogo className="size-4 md:size-7 mb-1 md:mb-0" />
+        <WebTitle className="text-base md:text-2xl" />
       </section>
       <section className="absolute mx-auto w-full">
         {!error && user && loading === false && (
-          <p className="font-bold font-header">
+          <p className="font-bold font-header text-sm md:text-lg">
             Welcome back, <strong className="text-sky-400">{user.name}</strong>
           </p>
         )}

@@ -27,7 +27,7 @@ const LoginForm = () => {
   const { register, handleSubmit, getValues } = useForm({
     defaultValues: {
       userEmail: localStorage.getItem("email"),
-      userPassword: localStorage.getItem("password")
+      userPassword: ""
     }
   });
   
@@ -40,7 +40,7 @@ const LoginForm = () => {
       const userPassword = getValues('userPassword');
 
       localStorage.setItem("email", userEmail);
-      localStorage.setItem("password", userPassword);
+      //localStorage.setItem("password", userPassword);
 
       await signInWithEmailAndPassword(auth, userEmail, userPassword);      
       toast.success("Signed in successfully", { position: "bottom-right", autoClose: 1500 });
@@ -57,7 +57,7 @@ const LoginForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-fit w-80 
                   rounded-3xl flex flex-col justify-start items-center gap-2
-                  py-3 px-4 "
+                  py-3 px-4 mt-36"
       >
         <FormHeader />
         <main className="w-full mt-5">
