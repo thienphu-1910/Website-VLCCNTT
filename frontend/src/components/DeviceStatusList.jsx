@@ -185,7 +185,7 @@ const DeviceStatusList = ({ className = "" }) => {
             className="fill-none stroke-yellow-400 size-9 
                                        bg-yellow-200/50 rounded-lg p-1"
           />
-          <h3 className="text-black font-bold text-lg">Alarm Sound</h3>
+          <h3 className="text-black font-bold text-lg">Tip</h3>
         </section>
         <div className=" text-sm text-left px-2 font-bold text-black/50 group-hover:text-black w-full h-fit py-1 bg-gray-400/20 group-hover:bg-gray-400/50 rounded-lg text-wrap">
           Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết bạn nhé!
