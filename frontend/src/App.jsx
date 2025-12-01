@@ -34,9 +34,8 @@ function App() {
 
   return (  
     <>    
-      <RouterProvider router={test_router} />
-      {/* <ToastContainer />
-      <RouterProvider router={router} />  */}
+      <RouterProvider router={router} /> 
+      <ToastContainer />
     </>           
   );
 }

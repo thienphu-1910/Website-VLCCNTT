@@ -44,9 +44,7 @@ const LoginForm = () => {
 
       await signInWithEmailAndPassword(auth, userEmail, userPassword);
       toast("Signed in successfully!", "success");
-      setTimeout(() => {
-        navigate("/home");
-      }, 700);
+      navigate("/home");
     } catch (error) {
       console.log(error);
       toast.error("Failed to sign in.", { position: "bottom-right", autoClose: 1500 });
