@@ -104,7 +104,7 @@ const DeviceStatusList = ({ className = "" }) => {
               className="fill-gray-300 stroke-gray-500 size-9 
                                         bg-black/7 rounded-lg p-1"
             />
-            <h3 className="text-black font-bold text-lg">System Status</h3>
+            <h3 className="text-black font-bold text-lg">Smoke</h3>
           </section>
           <div className="bg-green-200/50 font-bold text-green-400 w-fit px-3 py-1 rounded-full flex flex-row gap-2 justify-center items-center">
             <div className="size-2 rounded-full bg-green-500"></div>
