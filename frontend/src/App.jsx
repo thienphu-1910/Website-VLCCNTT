@@ -23,14 +23,14 @@ function App() {
     )
   );
 
-  const test_router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path='/' element={<MainLayout />}>
-        <Route index element={<LoginPage />} />
-        <Route path='/home' element={<HomePage />} />
-      </Route>
-    )
-  );
+  // const test_router = createBrowserRouter(
+  //   createRoutesFromElements(
+  //     <Route path='/' element={<MainLayout />}>
+  //       <Route index element={<LoginPage />} />
+  //       <Route path='/home' element={<HomePage />} />
+  //     </Route>
+  //   )
+  // );
 
   return (  
     <>    

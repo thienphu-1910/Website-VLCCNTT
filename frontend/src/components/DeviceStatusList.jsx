@@ -44,7 +44,7 @@ const DeviceStatusList = ({ className = "" }) => {
   return (
     <div
       className={twMerge(
-        "w-full grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5 justify-center justify-items-center",
+        "w-full grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 justify-center justify-items-center",
         className
       )}
     >
@@ -117,7 +117,7 @@ const DeviceStatusList = ({ className = "" }) => {
         className={
           "flex flex-col gap-5 group relative" +
           (triggered &&
-            " bg-red-200/50 hover:bg-red-200/50 outline-offset-4 outline-3 outline-red-400 scale-102")
+            " bg-red-200/50 hover:bg-red-200/50 scale-102")
         }
       >
         {triggered && (
