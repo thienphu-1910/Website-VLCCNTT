@@ -9,9 +9,21 @@ import MainLayout from './layout/MainLayout';
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./router/ProtectedRoute";
 
 function App() {  
   const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path='/' element={<MainLayout />}>
+        <Route index element={<LoginPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='/home' element={<HomePage />} />
+        </Route>
+      </Route>
+    )
+  );
+
+  const test_router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<MainLayout />}>
         <Route index element={<LoginPage />} />
@@ -21,9 +33,10 @@ function App() {
   );
 
   return (  
-    <>
-      <ToastContainer />
-      <RouterProvider router={router} /> 
+    <>    
+      <RouterProvider router={test_router} />
+      {/* <ToastContainer />
+      <RouterProvider router={router} />  */}
     </>           
   );
 }
