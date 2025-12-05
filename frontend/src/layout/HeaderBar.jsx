@@ -10,8 +10,7 @@ const HeaderBar = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthenticated(user ? true : false);
-      setLoading(false);
-
+      setLoading(user ? false : true);
     })    
     return () => unsubscribe();
   }, []);
@@ -21,7 +20,7 @@ const HeaderBar = () => {
   }
 
   return (
-    authenticated && (
+    authenticated && !loading && (
       <ul className="w-fit mx-auto bg-white py-1 text-black mt-20 rounded-full flex flex-row gap-3 px-2">      
         <li className=" px-5">
           <NavLink to="/home" className={({ isActive, isPending }) =>
