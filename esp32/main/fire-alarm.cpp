@@ -12,6 +12,7 @@
 
 
 void app_main(void) { 
+    // Initialize ESP Setup
     bool init_success = init_esp_setup();
 
     if (init_success == false) {
@@ -19,10 +20,14 @@ void app_main(void) {
         return;
     }
 
-    std::string mqtt_uri = "";
-    SmokeSensor smokeSensor(34);
-    MQTTHandler mqttHandler(mqtt_uri);
+    // Initialize Smoke Sensor on analog pin 34
+    SmokeSensor smokeSensor(34, "Device001");
 
+    // Connect Wifi here
+
+    // Initialize MQTT Handler
+    std::string mqtt_uri = "";
+    MQTTHandler mqttHandler(mqtt_uri);
     mqttHandler.start();
 
     while (true) {

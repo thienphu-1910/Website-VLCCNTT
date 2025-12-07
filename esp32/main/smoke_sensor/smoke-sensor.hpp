@@ -15,8 +15,9 @@ class SmokeSensor {
     private:
         int _sensorPin;
         int _smokeLevel;
+        std::string _deviceId;
     public:
-        SmokeSensor(int sensorPin);
+        SmokeSensor(int sensorPin, std::string deviceId);
         ~SmokeSensor();
         void setSmokeLevel();
         int getSmokeLevel();

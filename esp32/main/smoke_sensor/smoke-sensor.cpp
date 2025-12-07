@@ -7,7 +7,7 @@
 #include "driver/gpio.h"
 #include "driver/adc.h"
 
-SmokeSensor::SmokeSensor(int sensorPin) {
+SmokeSensor::SmokeSensor(int sensorPin, std::string deviceId) : _deviceId(deviceId) {
     std::vector<int> invalidPins = {1, 2, 3, 4, 6, 7, 9, 19, 26, 37};
 
     if (sensorPin < 0 || sensorPin > 42) {
