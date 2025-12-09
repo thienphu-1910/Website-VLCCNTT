@@ -14,7 +14,7 @@ SmokeSensor::~SmokeSensor() {
     }
 }
 
-void SmokeSensor::start() {
+bool SmokeSensor::start() {
     adc_oneshot_chan_cfg_t channel_config = {
         .atten = ADC_ATTEN_DB_12,
         .bitwidth = ADC_BITWIDTH_DEFAULT
@@ -23,7 +23,7 @@ void SmokeSensor::start() {
     esp_err_t chan_cfg = adc_oneshot_config_channel(_adc_handle, _analogPin, &channel_config);
     if (chan_cfg != ESP_OK) {
         ESP_LOGE(TAG, "Failed to configure ADC channel.");
-        return;
+        return false;
     }
 
     adc_oneshot_unit_init_cfg_t init_config = {
@@ -35,8 +35,11 @@ void SmokeSensor::start() {
     esp_err_t new_unit = adc_oneshot_new_unit(&init_config, &_adc_handle);
     if (new_unit != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize ADC oneshot unit.");
-        return;
+        return false;
     }
+
+    ESP_LOGI(TAG, "Smoke sensor started successfully.");
+    return true;
 }
 
 void SmokeSensor::readSmokeLevel() {
