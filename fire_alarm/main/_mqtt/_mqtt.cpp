@@ -1,5 +1,6 @@
 #include "_mqtt.hpp"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
 
 MQTTClient::MQTTClient(std::string brokerURI, std::string topic): _uri(brokerURI), _client(nullptr), _topic(topic) {}
 
