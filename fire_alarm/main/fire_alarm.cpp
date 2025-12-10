@@ -2,6 +2,7 @@
 #include "_init/_init.hpp"
 #include "_mqtt/_mqtt.hpp"
 #include "_smoke_sensor/_smoke_sensor.hpp"
+#include "supersecretkey.h"
 
 extern "C" {
     void app_main(void);
@@ -9,24 +10,24 @@ extern "C" {
 
 void app_main(void) {
     // ---------------------------- DEBUG -----------------------------
-    // bool init_success = init();
+    bool init_success = init();
 
-    // if (false == init_success) {
-    //     std::cerr << "System initialization failed. Halting execution." << std::endl;
-    //     return;
-    // }
-    // else {
-    //     std::cout << "System initialization succeeded. Continuing execution." << std::endl;
-    // }
+    if (false == init_success) {
+        std::cerr << "System initialization failed. Halting execution." << std::endl;
+        return;
+    }
+    else {
+        std::cout << "System initialization succeeded. Continuing execution." << std::endl;
+    }
 
-    // std::string brokerURI = "";
-    // std::string topic = "";
-    // MQTTClient mqtt(brokerURI, topic);
-    // bool mqtt_connected = mqtt.connect();
-    // if (mqtt_connected == false) {
-    //     std::cerr << "Failed to connect to MQTT broker. Halting execution." << std::endl;
-    //     return;
-    // }
+    std::string brokerURI = MQTT_BROKER_URI;
+    std::string topic = MQTT_TOPIC;
+    MQTTClient mqtt(brokerURI, topic);
+    bool mqtt_connected = mqtt.connect();
+    if (mqtt_connected == false) {
+        std::cerr << "Failed to connect to MQTT broker. Halting execution." << std::endl;
+        return;
+    }
 
     // adc_channel_t smokeSensorPin = ADC_CHANNEL_6; // GPIO34
     // int smokeThreshold = 50; // 50%

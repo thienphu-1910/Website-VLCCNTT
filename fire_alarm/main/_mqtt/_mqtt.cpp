@@ -1,6 +1,7 @@
 #include "_mqtt.hpp"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
+#include "../supersecretkey.h"
 
 MQTTClient::MQTTClient(std::string brokerURI, std::string topic): _uri(brokerURI), _client(nullptr), _topic(topic) {}
 
@@ -30,6 +31,11 @@ void MQTTClient::eventHandler(void* handler_args, esp_event_base_t base, int32_t
 bool MQTTClient::connect() {
     esp_mqtt_client_config_t config = {};
     config.broker.address.uri = _uri.c_str();
+    config.broker.address.port = MQTT_PORT;
+
+    config.credentials.username = MQTT_USERNAME;
+    config.credentials.authentication.password = MQTT_PASSWORD;
+
     _client = esp_mqtt_client_init(&config);
     
     if (_client == nullptr) {
