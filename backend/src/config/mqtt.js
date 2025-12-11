@@ -39,6 +39,7 @@ client.on('message', async (topic, message) => {
             temperature: data['temperature'],
             co_percent: data['co_percent'],
             has_smoke: data['has_smoke'],
+            flame: data['flame'],
             current_time: toString(current_time)
         });
     } catch (error) {

@@ -14,6 +14,7 @@ class SmokeSensor {
         SmokeSensor(adc_channel_t analogPin, int threshold);
         ~SmokeSensor();
         bool start();
+        int getSmokeLevel();
         void readSmokeLevel();
         bool isSmokeDetected();
 };

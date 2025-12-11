@@ -9,7 +9,7 @@ extern "C" {
 }
 
 void app_main(void) {
-    // ---------------------------- DEBUG -----------------------------
+    // Initialize system 
     bool init_success = init();
 
     if (false == init_success) {
@@ -20,6 +20,9 @@ void app_main(void) {
         std::cout << "System initialization succeeded. Continuing execution." << std::endl;
     }
 
+    // TODO: Connect to WiFi 
+
+    // Declare and start MQTT client
     std::string brokerURI = MQTT_BROKER_URI;
     std::string topic = MQTT_TOPIC;
     MQTTClient mqtt(brokerURI, topic);
@@ -29,14 +32,40 @@ void app_main(void) {
         return;
     }
 
-    // adc_channel_t smokeSensorPin = ADC_CHANNEL_6; // GPIO34
-    // int smokeThreshold = 50; // 50%
-    // SmokeSensor smokeSensor(smokeSensorPin, smokeThreshold);
-    // bool smoke_sensor_started = smokeSensor.start();
 
-    // if (smoke_sensor_started == false) {
-    //     std::cerr << "Failed to start smoke sensor. Halting execution." << std::endl;
-    //     return;
-    // }
+    // Declare and start a smoke sensor
+    adc_channel_t smokeSensorPin = SMOKE_SENSOR_PIN; // GPIO34
+    int smokeThreshold = SMOKE_THRESHOLD; // 50%
+    SmokeSensor smokeSensor(smokeSensorPin, smokeThreshold);
+    bool smoke_sensor_started = smokeSensor.start();
+
+    if (smoke_sensor_started == false) {
+        std::cerr << "Failed to start smoke sensor. Halting execution." << std::endl;
+        return;
+    }
+
+    // Declare and start flame sensor
+
+    // Declare and start temperature sensor
+
+    while (true) {
+        smokeSensor.readSmokeLevel();
+        // flameSensor.readFlameLevel();
+        // temperatureSensor.readTemperature();
+
+        // constructs json message
+        std::string message = "{";
+        std::string device_id_msg = "\"device_id\": \"device_0001\", ";
+        std::string smoke_level_msg = "\"co_percent\": " + std::to_string(smokeSensor.getSmokeLevel());
+        
+
+        message += device_id_msg + smoke_level_msg;
+        message += "}";
+
+        mqtt.publish(message, QOS, RETAIN);
+        vTaskDelay(5000 / portTICK_PERIOD_MS); // Delay for 5 seconds
+
+        // MQTT cần subscribe để nhận tín hiệu nút bấm từ server + thay đổi về tiếng cho buzzer
+    }
 }
 

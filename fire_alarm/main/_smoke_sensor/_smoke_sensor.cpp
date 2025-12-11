@@ -42,6 +42,10 @@ bool SmokeSensor::start() {
     return true;
 }
 
+int SmokeSensor::getSmokeLevel() {
+    return _currentSmokeValue;
+}
+
 void SmokeSensor::readSmokeLevel() {
     int adc_value = adc_oneshot_read(_adc_handle, _analogPin, nullptr);
 
