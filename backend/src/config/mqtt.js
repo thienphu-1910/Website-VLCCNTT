@@ -1,5 +1,5 @@
-const mqtt = require('mqtt');
-const { db } = require('./firebaseAdmin.js');
+import mqtt from "mqtt";
+import { db } from "./firebaseAdmin.js";
 
 const brokerUrl = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
 const topic = process.env.MQTT_TOPIC || 'sensors/fire';
@@ -47,4 +47,4 @@ client.on('message', async (topic, message) => {
     }
 });
 
-module.exports =  { client }
+export { client };
