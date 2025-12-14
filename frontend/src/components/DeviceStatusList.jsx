@@ -11,6 +11,7 @@ import { LuAlarmSmoke } from "react-icons/lu";
 import { FaRegBell } from "react-icons/fa6";
 import { GrDocumentSound } from "react-icons/gr";
 import { HiOutlineLightBulb } from "react-icons/hi";
+import { ImFire } from "react-icons/im";
 
 //grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
 const DeviceStatusList = ({ className = "" }) => {
@@ -44,12 +45,12 @@ const DeviceStatusList = ({ className = "" }) => {
   return (
     <div
       className={twMerge(
-        "w-full mt-20 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 justify-center justify-items-center",
+        "w-full my-5 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-y-6 gap-x-0 justify-center items-center justify-items-center",
         className
       )}
     >
       <DeviceStatusCard key={1} className="flex flex-col gap-5">
-        <section className="w-full flex flex-row gap-2 items-center">
+        <section className="flex flex-row gap-2 items-center">
           <IoWarningOutline
             className="fill-green-400 stroke-green-400 size-9 
                                        bg-green-200/50 rounded-lg p-1"
@@ -63,22 +64,22 @@ const DeviceStatusList = ({ className = "" }) => {
       </DeviceStatusCard>
 
       <DeviceStatusCard key={2} className="flex flex-col gap-5">
-        <section className="w-full flex flex-row gap-2 items-center">
-          <CiWavePulse1
-            className="fill-blue-400 stroke-blue-400 stroke-1 size-9 
-                                       bg-blue-200/50 rounded-lg p-1"
+        <section className="flex flex-row gap-2 items-center">
+          <ImFire
+            className="fill-red-400 stroke-red-400 stroke-1 size-9 
+                                       bg-red-200/50 rounded-lg p-1"
           />
           <h3 className="text-black font-bold text-lg">CO Level</h3>
         </section>
         <div className="px-3 py-1 rounded-full flex flex-col gap-2 justify-center items-start">
           <p className="text-2xl text-blue-500">
-            442 <span className="text-base text-gray-500">ppm</span>
+            30 <span className="text-base text-gray-500">%</span>
           </p>
           <div className="w-full h-2 bg-gray-400/40 rounded-full">
             <div
               style={{
-                width: `60%`,
-                backgroundSize: `${100 * (100 / `60`)}% 100%`,
+                width: `30%`,
+                backgroundSize: `${100 * (100 / `30`)}% 100%`,
               }}
               className="h-2 bg-linear-to-r from-green-400 from-30% via-yellow-300 via-55% to-red-500 to-100% rounded-full"
             ></div>
@@ -135,7 +136,7 @@ const DeviceStatusList = ({ className = "" }) => {
               triggered && "animate-bounce border-2 border-red-400"
             )}
           />
-          <h3 className={twMerge("text-black font-bold text-lg")}>
+          <h3 className={twMerge("text-black font-bold text-lg ", triggered && "text-red-700 text-xl")}>
             Emergency Control
           </h3>
         </section>
@@ -160,7 +161,7 @@ const DeviceStatusList = ({ className = "" }) => {
       </DeviceStatusCard>
 
       <DeviceStatusCard key={5} className="flex flex-col gap-5 group">
-        <section className="w-full flex flex-row gap-2 items-center">
+        <section className="flex flex-row gap-2 items-center">
           <GrDocumentSound
             className="fill-indigo-400 stroke-indigo-400 size-9 
                                        bg-indigo-200/50 rounded-lg p-1"
@@ -199,7 +200,7 @@ const DeviceStatusList = ({ className = "" }) => {
           nhé! Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết
           bạn nhé!
         </div>
-      </DeviceStatusCard>
+      </DeviceStatusCard>      
     </div>
   );
 };

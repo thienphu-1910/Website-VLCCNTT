@@ -16,15 +16,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 a {  
   text-decoration: inherit;
 }
 
 body {
-  margin: 0;
-  display: flex;  
-  min-width: 100vw;
-  min-height: 100vh;
+  margin: 0;  
+  padding: 0;    
 }
 
 h1 {

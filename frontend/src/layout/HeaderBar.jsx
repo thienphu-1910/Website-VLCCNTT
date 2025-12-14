@@ -18,22 +18,22 @@ const HeaderBar = () => {
   if (loading) {
     return <></>
   }
-
+  
   return (
-    authenticated && !loading && (
-      <ul className="w-fit mx-auto bg-white py-1 text-black mt-20 rounded-full flex flex-row gap-3 px-2">      
-        <li className=" px-5">
+    (authenticated && !loading) ? (
+      <ul className="w-fit mx-auto bg-white py-2 px-2 text-black font-bold rounded-full flex flex-row gap-3">      
+        <li className="">
           <NavLink to="/home" className={({ isActive, isPending }) =>
-            isPending ? "pending" : isActive ? "active" : ""
+            isPending ? "py-1 px-5" : isActive ? "text-blue-500 bg-gray-100 py-1 px-5 rounded-full" : "py-1 px-5"
           }>Home</NavLink>          
         </li>
-        <li className=" px-5">
+        <li className="">
           <NavLink to="/history" className={({ isActive, isPending }) =>
-            isPending ? "pending" : isActive ? "active" : ""
+            isPending ? "py-1 px-5" : isActive ? "text-blue-500 bg-gray-100 py-1 px-5 rounded-full" : "py-1 px-5"
           }>History</NavLink>
         </li>
       </ul>
-    )
+    ) : (<></>)
   );
 }
 

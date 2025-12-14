@@ -52,12 +52,12 @@ const LoginForm = () => {
   }
 
   return (
-    <>
+    <div className="">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-[#E5ECF6] border border-[#FFFCFC]/50 shadow-2xl h-fit w-80 
                   rounded-3xl flex flex-col justify-start items-center gap-2
-                  py-3 px-4 mt-36"
+                  py-3 px-4"
       >
         <FormHeader />
         <main className="w-full mt-5">
@@ -111,7 +111,7 @@ const LoginForm = () => {
           </button>
         </section>
       </form>
-    </>
+    </div>
   );
 };
 

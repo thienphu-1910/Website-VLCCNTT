@@ -22,7 +22,7 @@ const ProtectedRoute = () => {
   }
 
   return (
-    authenticated ? <Outlet />: <Navigate to="/" replace />
+    authenticated ? <Outlet /> : <Navigate to="/" replace />
   );
 }
 

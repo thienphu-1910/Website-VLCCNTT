@@ -33,7 +33,7 @@ const AvatarDropdown = () => {
 const UserAvatar = ({ user }) => {
   const [show, setShow] = useState(false);
   return (
-    <div className="size-fit relative">
+    <div className="size-fit">
       <img src={user.avatar_url} alt={user.name + " avatar"} 
            className="cursor-pointer size-10 rounded-full object-center object-cover border-2 border-white"
            onClick={() => setShow(!show)}
