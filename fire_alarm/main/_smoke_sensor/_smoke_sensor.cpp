@@ -2,11 +2,8 @@
 #include "esp_adc/adc_oneshot.h"
 #include "esp_log.h"
 
-SmokeSensor::SmokeSensor(adc_channel_t analogPin, int threshold) {
-    _analogPin = analogPin;
-    _threshold = threshold;
-    _currentSmokeValue = 0;
-}
+SmokeSensor::SmokeSensor(adc_channel_t analog_pin, int threshold)
+    : _analog_pin(analog_pin), _threshold(threshold), _current_smoke_value(0) {}
 
 SmokeSensor::~SmokeSensor() {
     if (_adc_handle != nullptr) {
@@ -20,7 +17,7 @@ bool SmokeSensor::start() {
         .bitwidth = ADC_BITWIDTH_DEFAULT
     };
 
-    esp_err_t chan_cfg = adc_oneshot_config_channel(_adc_handle, _analogPin, &channel_config);
+    esp_err_t chan_cfg = adc_oneshot_config_channel(_adc_handle, _analog_pin, &channel_config);
     if (chan_cfg != ESP_OK) {
         ESP_LOGE(TAG, "Failed to configure ADC channel.");
         return false;
@@ -43,11 +40,11 @@ bool SmokeSensor::start() {
 }
 
 int SmokeSensor::getSmokeLevel() {
-    return _currentSmokeValue;
+    return _current_smoke_value;
 }
 
 void SmokeSensor::readSmokeLevel() {
-    int adc_value = adc_oneshot_read(_adc_handle, _analogPin, nullptr);
+    int adc_value = adc_oneshot_read(_adc_handle, _analog_pin, nullptr);
 
     if (adc_value == -1) {
         ESP_LOGE(TAG, "Failed to read ADC value.");
@@ -55,9 +52,9 @@ void SmokeSensor::readSmokeLevel() {
     }
 
     ESP_LOGI(TAG, "Raw ADC Value: %d", adc_value);
-    _currentSmokeValue = adc_value / 4095 * 100; // Convert to percentage
+    _current_smoke_value = adc_value / 4095 * 100; // Convert to percentage
 }
 
 bool SmokeSensor::isSmokeDetected() {
-    return _currentSmokeValue >= _threshold;
+    return _current_smoke_value >= _threshold;
 }

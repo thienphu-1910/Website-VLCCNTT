@@ -2,7 +2,8 @@
 #include "_init/_init.hpp"
 #include "_mqtt/_mqtt.hpp"
 #include "_smoke_sensor/_smoke_sensor.hpp"
-#include "supersecretkey.h"
+#include "../config.hpp"
+#include <stdlib.h>
 
 extern "C" {
     void app_main(void);
@@ -23,20 +24,19 @@ void app_main(void) {
     // TODO: Connect to WiFi 
 
     // Declare and start MQTT client
-    std::string brokerURI = MQTT_BROKER_URI;
+    std::string broker_uri = MQTT_BROKER_URI;
     std::string topic = MQTT_TOPIC;
-    MQTTClient mqtt(brokerURI, topic);
+    MQTTClient mqtt(broker_uri, topic);
     bool mqtt_connected = mqtt.connect();
     if (mqtt_connected == false) {
         std::cerr << "Failed to connect to MQTT broker. Halting execution." << std::endl;
         return;
     }
 
-
     // Declare and start a smoke sensor
-    adc_channel_t smokeSensorPin = SMOKE_SENSOR_PIN; // GPIO34
-    int smokeThreshold = SMOKE_THRESHOLD; // 50%
-    SmokeSensor smokeSensor(smokeSensorPin, smokeThreshold);
+    adc_channel_t smoke_sensor_pin = SMOKE_SENSOR_PIN; // GPIO34
+    int smoke_threshold = SMOKE_THRESHOLD; // 50%
+    SmokeSensor smokeSensor(smoke_sensor_pin, smoke_threshold);
     bool smoke_sensor_started = smokeSensor.start();
 
     if (smoke_sensor_started == false) {

@@ -1,4 +1,4 @@
 build
 .vscode
 sdkconfig
-supersecretkey.h
+config.hpp

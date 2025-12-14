@@ -3,7 +3,8 @@
 #include "freertos/FreeRTOS.h"
 #include "../supersecretkey.h"
 
-MQTTClient::MQTTClient(std::string brokerURI, std::string topic): _uri(brokerURI), _client(nullptr), _topic(topic) {}
+MQTTClient::MQTTClient(std::string broker_uri, std::string topic)
+    : _uri(broker_uri), _client(nullptr), _topic(topic) {}
 
 MQTTClient::~MQTTClient() {
     if (_client != nullptr) {
