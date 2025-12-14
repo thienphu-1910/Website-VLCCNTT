@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../config.hpp"
+#include "../config.h"
 
 extern "C" {
     void app_main(void);
