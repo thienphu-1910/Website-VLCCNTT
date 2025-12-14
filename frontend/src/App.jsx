@@ -27,14 +27,14 @@ function App() {
   // const test_router = createBrowserRouter(
   //   createRoutesFromElements(
   //     <Route path='/' element={<MainLayout />}>
-  //       <Route index element={<LoginPage />} />
+  //       <Route index element={<LoginPage />} />sett
   //       <Route path='/home' element={<HomePage />} />
   //     </Route>
   //   )
   // );
 
   return (  
-    <>    
+    <> 
       <RouterProvider router={router} /> 
       <ToastContainer />
     </>           

@@ -3,10 +3,18 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import HeaderBar from "./HeaderBar";
 import Footer from "./Footer";
+import useHardLogout from "../router/AutoLogout";
+
+const Handler = () => {
+  useHardLogout();
+  return null;
+}
 
 const MainLayout = () => {
+  
   return (
     <div className="min-h-screen flex flex-col justify-between items-center overflow-x-hidden overflow-y-auto">      
+      <Handler/>
       <header className="flex flex-col gap-5">
         <Header />      
         <HeaderBar/>                
@@ -14,6 +22,10 @@ const MainLayout = () => {
       <Outlet />                    
       <Footer />      
     </div>
+
+
+
+
   );
 };
 
