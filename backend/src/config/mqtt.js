@@ -1,13 +1,15 @@
 import mqtt from "mqtt";
 import { db } from "./firebaseAdmin.js";
 
-const brokerUrl = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
-const topic = process.env.MQTT_TOPIC || 'sensors/fire';
-const clientId = process.env.MQTT_CLIENT_ID || 'mqtt_client';
+const brokerUrl = process.env.MQTT_BROKER_URI || '';
+const topic = process.env.MQTT_TOPIC || '';
+const clientId = process.env.MQTT_CLIENT_ID || '';
 const username = process.env.MQTT_USERNAME || '';
-const password = process.env.MQTT_PASSWD || '';
+const password = process.env.MQTT_PASSWORD || '';
+const port = process.env.MQTT_PORT || 8883;
 
 const option = {
+    port: port,
     connectTimeout: 4000,
 
     clientId: clientId,
