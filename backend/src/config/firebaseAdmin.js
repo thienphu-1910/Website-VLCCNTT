@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 const admin = require('firebase-admin');
 const dotenv = require('dotenv');
 
@@ -14,4 +17,4 @@ admin.initializeApp({
 const db = admin.firestore();
 const auth = admin.auth();
 
-module.exports = { admin, db, auth };
+export { admin, db, auth };
