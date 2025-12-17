@@ -52,7 +52,7 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
     int message_id = 0;
 
     switch (event->event_id) {
-        case MQTT_EVENT_CONNECTED:
+        case MQTT_EVENT_CONNECTED: {
             ESP_LOGI(TAG, "Connected.");
             int size = sizeof(_config.subscribe_topic) / sizeof(_config.subscribe_topic[0]);
             for (int i = 0; i < size; ++i) {
@@ -60,7 +60,8 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
                 ESP_LOGI(TAG, "Subscribed. Message ID = %d.", message_id);
             }
             break;
-
+        }
+        
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "Disconnected.");
             break;
@@ -83,15 +84,21 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
             ESP_LOGI(TAG, "Error. Error type: 0x%x.", event->error_handle->error_type); // 0x%x in thêm prefix 0x cho hexa
             break;
 
-        case MQTT_EVENT_DATA:
+        case MQTT_EVENT_DATA: {
             ESP_LOGI(TAG, "Received data");
             if (event->data_len == 1) {
                 char buffer[2];
                 memcpy(buffer, event->data, event->data_len);
-                buffer[2] = '\0';
+                buffer[1] = '\0';
 
                 trigger = atoi(buffer);
             }
+            break;
+        }
+
+        case MQTT_EVENT_ANY: 
+        case MQTT_EVENT_BEFORE_CONNECT:
+        case MQTT_EVENT_DELETED:
             break;
 
         default:
