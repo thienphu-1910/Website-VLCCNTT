@@ -23,7 +23,8 @@ private:
     esp_mqtt_client_handle_t _client;
     static mqtt_config_t _config;
 public:
-    inline static int trigger = 0;
+    inline static int light_trigger = 0;
+    inline static int buzzer_trigger = 0;
 
     MQTTClient(mqtt_config_t* config);
     ~MQTTClient();

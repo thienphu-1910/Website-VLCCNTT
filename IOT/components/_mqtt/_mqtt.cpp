@@ -61,7 +61,7 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
             }
             break;
         }
-        
+
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "Disconnected.");
             break;
@@ -86,13 +86,25 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
 
         case MQTT_EVENT_DATA: {
             ESP_LOGI(TAG, "Received data");
-            if (event->data_len == 1) {
-                char buffer[2];
-                memcpy(buffer, event->data, event->data_len);
-                buffer[1] = '\0';
+            if (strcmp(event->topic, "fire_alarm/nhom7/lights")) {
+                if (event->data_len == 2) {
+                    char temp[3];
+                    memcpy(temp, event->data, event->data_len);
+                    temp[2] = '\0';
 
-                trigger = atoi(buffer);
+                    if (strcmp(temp, "ON")) light_trigger = 1;
+                }
+            } 
+            else if (strcmp(event->topic, "fire_alarm/nhom7/buzzer")) {
+                if (event->data_len == 2) {
+                    char temp[3];
+                    memcpy(temp, event->data, event->data_len);
+                    temp[2] = '\0';
+
+                    if (strcmp(temp, "ON")) buzzer_trigger = 1;
+                }
             }
+            
             break;
         }
 

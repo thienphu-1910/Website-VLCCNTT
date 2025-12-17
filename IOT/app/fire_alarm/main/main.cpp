@@ -42,19 +42,29 @@ void app_main(void) {
         
         int flame_percentage = flame_sensor.getFlamePercentage();
 
-        if (has_smoke == true || temperature >= 57.0 || flame_percentage >= 30 || mqtt_client.trigger == 1) {
+        if (has_smoke == true && temperature >= 57.0 && flame_percentage >= 30) {
             for (int i = 0; i < 3; i++) {
                 led.blink();
                 buzzer.beep();
             }
         }
 
+        if (mqtt_client.buzzer_trigger == 1) {
+            buzzer.beep();
+        }
+
+        if (mqtt_client.light_trigger == 1) {
+            led.blink();
+        }
+
+        int trigger = mqtt_client.buzzer_trigger || mqtt_client.light_trigger;
+
         cJSON *root = cJSON_CreateObject();
         cJSON_AddStringToObject(root, "deviceId", DEVICEID);
         cJSON_AddNumberToObject(root, "temperature", temperature);
         cJSON_AddNumberToObject(root, "smoke", has_smoke);
         cJSON_AddNumberToObject(root, "flame", flame_percentage);
-        cJSON_AddNumberToObject(root, "manual", mqtt_client.trigger);
+        cJSON_AddNumberToObject(root, "manual", trigger);
 
         char* json_string = cJSON_PrintUnformatted(root);
         mqtt_client.data(json_string);
