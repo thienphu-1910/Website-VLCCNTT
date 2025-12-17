@@ -1,25 +1,30 @@
 #ifndef _THERMISTOR_H
 #define _THERMISTOR_H
 
-#include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_oneshot.h"
+
+typedef struct {
+    adc_unit_t unit;
+    adc_atten_t atten;
+    adc_channel_t channel;
+    uint32_t b_value;
+    uint32_t vdd_mv;
+    uint32_t r25_ohm;
+    uint32_t fixed_ohm;
+} thermistor_config_t;
 
 class Thermistor {
 private:
     inline static const char *TAG = "Thermistor";
 
-    uint32_t _b_value = 3950;
-    uint32_t _r25_ohm = 10000;
-    uint32_t _fixed_ohm = 10000;
-    uint32_t _vdd_mv = 3300;
-
-    adc_channel_t _channel;
-    adc_oneshot_unit_handle_t _adc_handle;
+    thermistor_config_t _config;
     adc_cali_handle_t _adc_cali_handle;
+    adc_oneshot_unit_handle_t _adc_handle;
 public:
-    Thermistor(adc_channel_t channel);
-    
-    void start();
+    Thermistor(const thermistor_config_t *config);
+    ~Thermistor();
+
     float temperature();
 };
 
