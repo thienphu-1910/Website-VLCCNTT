@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <footer className="bg-slate-900  text-slate-300 w-screen h-fit">
       <div className="px-6 py-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           
           {/* Left Side: Project Info */}
           <div className="text-center md:text-left">
@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
           <ul className="flex flex-col gap-3 text-sm">
             {teamMembers.map((m) => (
-              <div className="flex flex-row gap-2">
+              <div className="flex flex-row gap-2" key={m.id}>
                 <div>{m.id}</div>
                 <div>-</div>
                 <div>{m.name}</div>

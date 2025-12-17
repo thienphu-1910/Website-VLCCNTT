@@ -12,11 +12,31 @@ import { FaRegBell } from "react-icons/fa6";
 import { GrDocumentSound } from "react-icons/gr";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { ImFire } from "react-icons/im";
+import { HistoryApi } from "../api/history.api";
+import { LightApi } from "../api/light.api";
 
 //grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
 const DeviceStatusList = ({ className = "" }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [triggered, setTriggered] = useState(false);
+  const [triggered, setTriggered] = useState(() => {
+    const saved = localStorage.getItem("alarm");
+    return saved === "true"; // Returns true if "true", false otherwise
+  });
+  const deviceStatus = {
+    id: 1,
+    user_id: 1,
+    system_status: 0,
+    flame_percentage: 30,
+    temperature: 30,
+    smoke_status: 0,
+    sounds: ["Sound A", "Sound B", "Sound C"],
+    tips: ["Abcd", "bcdef"],
+  };
+
+  const smokeStatusMapping = {
+    0: "Clear",
+    1: "Smoke",
+  };
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -38,8 +58,32 @@ const DeviceStatusList = ({ className = "" }) => {
     // note: searchParams here is stable from the hook, setSearchParams is stable
   }, [searchParams, setSearchParams]);
 
-  const onClick = () => {
-    setTriggered(!triggered);
+  useEffect(() => {
+    localStorage.setItem("alarm", triggered);
+  }, [triggered]);
+
+  const onClick = async () => {  
+    const newValue = !triggered;
+    await LightApi.postSignal(newValue ? "ON" : "OFF");
+    setTriggered(newValue);
+    
+    if (newValue === true) {
+      console.log("Alarm activated - Logging to History...");
+
+      const newHistory = {
+        flame_percentage: deviceStatus.flame_percentage,
+        smoke_status: deviceStatus.smoke_status,
+        temperature: deviceStatus.temperature,
+        timestamp: new Date().toISOString(),       
+      };
+      try {
+        await HistoryApi.postHistory(newHistory);
+      } catch (error) {
+        console.error("Failed to log alarm history:", error);
+      }
+    } else {
+      console.log("Alarm stopped - No history log needed.");
+    }
   };
 
   return (
@@ -69,17 +113,20 @@ const DeviceStatusList = ({ className = "" }) => {
             className="fill-red-400 stroke-red-400 stroke-1 size-9 
                                        bg-red-200/50 rounded-lg p-1"
           />
-          <h3 className="text-black font-bold text-lg">CO Level</h3>
+          <h3 className="text-black font-bold text-lg">Flame Percentage</h3>
         </section>
         <div className="px-3 py-1 rounded-full flex flex-col gap-2 justify-center items-start">
           <p className="text-2xl text-blue-500">
-            30 <span className="text-base text-gray-500">%</span>
+            {deviceStatus.flame_percentage}{" "}
+            <span className="text-base text-gray-500">%</span>
           </p>
           <div className="w-full h-2 bg-gray-400/40 rounded-full">
             <div
               style={{
-                width: `30%`,
-                backgroundSize: `${100 * (100 / `30`)}% 100%`,
+                width: `${deviceStatus.flame_percentage}%`,
+                backgroundSize: `${
+                  100 * (100 / `${deviceStatus.flame_percentage}`)
+                }% 100%`,
               }}
               className="h-2 bg-linear-to-r from-green-400 from-30% via-yellow-300 via-55% to-red-500 to-100% rounded-full"
             ></div>
@@ -97,7 +144,7 @@ const DeviceStatusList = ({ className = "" }) => {
             <h3 className="text-black font-bold text-lg">Temperature</h3>
           </section>
           <p className="text-2xl text-orange-500 flex flex-row items-start">
-            30
+            {deviceStatus.temperature}
             <RiCelsiusFill className="fill-gray-500 size-5" />
           </p>
         </div>
@@ -111,7 +158,7 @@ const DeviceStatusList = ({ className = "" }) => {
           </section>
           <div className="bg-green-200/50 font-bold text-green-400 w-fit px-3 py-1 rounded-full flex flex-row gap-2 justify-center items-center">
             <div className="size-2 rounded-full bg-green-500"></div>
-            <p>Clear</p>
+            <p>{smokeStatusMapping[deviceStatus.smoke_status]}</p>
           </div>
         </div>
       </DeviceStatusCard>
@@ -136,7 +183,12 @@ const DeviceStatusList = ({ className = "" }) => {
               triggered && "animate-bounce border-2 border-red-400"
             )}
           />
-          <h3 className={twMerge("text-black font-bold text-lg ", triggered && "text-red-700 text-xl")}>
+          <h3
+            className={twMerge(
+              "text-black font-bold text-lg ",
+              triggered && "text-red-700 text-xl"
+            )}
+          >
             Emergency Control
           </h3>
         </section>
@@ -200,7 +252,7 @@ const DeviceStatusList = ({ className = "" }) => {
           nhé! Trước khi rời khỏi nhà hãy tắt các thiết bị điện không cần thiết
           bạn nhé!
         </div>
-      </DeviceStatusCard>      
+      </DeviceStatusCard>
     </div>
   );
 };
