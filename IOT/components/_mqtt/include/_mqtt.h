@@ -8,6 +8,7 @@
 typedef struct {
     const char* broker_uri;
     const char* topic;
+    const char* subscribe_topic[20];
     const char* data;
     const char* username;
     const char* password;
@@ -22,6 +23,8 @@ private:
     esp_mqtt_client_handle_t _client;
     static mqtt_config_t _config;
 public:
+    inline static int trigger = 0;
+
     MQTTClient(mqtt_config_t* config);
     ~MQTTClient();
     bool publish();

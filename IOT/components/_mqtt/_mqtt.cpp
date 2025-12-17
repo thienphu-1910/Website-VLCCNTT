@@ -54,8 +54,11 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "Connected.");
-            message_id = esp_mqtt_client_subscribe(client, _config.topic, _config.qos);
-            ESP_LOGI(TAG, "Subscribed. Message ID = %d.", message_id);
+            int size = sizeof(_config.subscribe_topic) / sizeof(_config.subscribe_topic[0]);
+            for (int i = 0; i < size; ++i) {
+                message_id = esp_mqtt_client_subscribe(client, _config.subscribe_topic[i], _config.qos);
+                ESP_LOGI(TAG, "Subscribed. Message ID = %d.", message_id);
+            }
             break;
 
         case MQTT_EVENT_DISCONNECTED:
@@ -80,6 +83,17 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
             ESP_LOGI(TAG, "Error. Error type: 0x%x.", event->error_handle->error_type); // 0x%x in thêm prefix 0x cho hexa
             break;
 
+        case MQTT_EVENT_DATA:
+            ESP_LOGI(TAG, "Received data");
+            if (event->data_len == 1) {
+                char buffer[2];
+                memcpy(buffer, event->data, event->data_len);
+                buffer[2] = '\0';
+
+                trigger = atoi(buffer);
+            }
+            break;
+
         default:
             ESP_LOGI(TAG, "Other event. Message ID = %d.", event->msg_id);
             break;
@@ -97,3 +111,4 @@ bool MQTTClient::publish() {
 
     return true;
 }
+
