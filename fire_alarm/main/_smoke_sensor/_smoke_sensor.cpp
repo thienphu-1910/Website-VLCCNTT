@@ -22,7 +22,7 @@ SmokeSensor::SmokeSensor(smoke_sensor_config_t *config) {
 
 int SmokeSensor::getSensorValue() {
     int value = gpio_get_level(_config.pin);
-
+    _sensor_value = value;
     return value;
 }
 

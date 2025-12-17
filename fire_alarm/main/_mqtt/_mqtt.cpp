@@ -17,7 +17,10 @@ MQTTClient::MQTTClient(mqtt_config_t* config) {
     mqtt_config.broker.address.uri = config->broker_uri;
     mqtt_config.credentials.username = config->username;
     mqtt_config.credentials.authentication.password = config->password;
-    mqtt_config.broker.verification.crt_bundle_attach = esp_crt_bundle_attach;
+    mqtt_config.broker.verification.crt_bundle_attach = esp_crt_bundle_attach; 
+    // Nếu không có bundle thì có thể tự download Signature (.pem) và update .crt.pem = file .pem vừa download
+    // Scalability đối với tự download Signature = 0 nên attach crt bundle.
+    // Nôm na là thiết bị sẽ có signature của các Authority -> HiveMQ sẽ có signature của một trong các Authority, nếu trùng signature thì connect, không thì connection refused
 
     _client = esp_mqtt_client_init(&mqtt_config);
 
@@ -36,6 +39,10 @@ MQTTClient::~MQTTClient() {
 
 void MQTTClient::data(const char* data) {
     _config.data = data;
+}
+
+const char* MQTTClient::getData() {
+    return _config.data;
 }
 
 void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_t event_id, void *event_data) {

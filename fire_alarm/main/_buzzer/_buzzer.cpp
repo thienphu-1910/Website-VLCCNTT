@@ -21,8 +21,8 @@ Buzzer::Buzzer(const buzzer_config_t *config) {
     ESP_ERROR_CHECK(gpio_config(&buzzer_config));
 }
 
-void Buzzer::beep(int times) {
-    for (int i = 0; i < times; i++) {
+void Buzzer::beep() {
+    for (int i = 0; i < _config.beep_times; i++) {
         gpio_set_level(_config.pin, 1);
         vTaskDelay(100 / portTICK_PERIOD_MS);
 

@@ -5,6 +5,7 @@
 
 typedef struct {
     gpio_num_t pin;
+    int beep_times = 3;
 } buzzer_config_t;
 
 class Buzzer {
@@ -14,7 +15,7 @@ private:
 
 public:
     Buzzer(const buzzer_config_t *config);
-    void beep(int times);
+    void beep();
 };
 
 #endif 

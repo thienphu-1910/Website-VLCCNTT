@@ -133,12 +133,50 @@ void wifi_init_sta(void)
 }
 
 void app_main(void) {
+    // Init bộ nhớ flash
     ESP_ERROR_CHECK(nvs_flash_init());
+
+    // Kết nối Wifi
     wifi_init_sta();
     
-    MQTTClient m(&mqtt_config);
-    const char* data = "hahahahahaha";
-    m.data(data);
-    std::cout << m.publish();
+    // Khởi tạo Object MQTTClient (Hàm tạo sẽ kết nối với broker)
+    MQTTClient mqtt_client(&mqtt_config);
+    
+    // Khai báo các thiết bị điện tử
+    LED led(&led_config);
+    Buzzer buzzer(&buzzer_config);
+
+    Thermistor thermistor(&thermistor_config);
+    FlameSensor flame_sensor(&flame_sensor_config);
+    SmokeSensor smoke_sensor(&smoke_sensor_config);
+
+    while (true) {
+        int smoke_sensor_value = smoke_sensor.getSensorValue();
+        bool has_smoke = smoke_sensor.hasSmoke();
+
+        float temperature = thermistor.temperature();
+        
+        int flame_percentage = flame_sensor.getFlamePercentage();
+
+        if (has_smoke == true || temperature >= 57.0 || flame_percentage >= 30) {
+            for (int i = 0; i < 3; i++) {
+                led.blink();
+                buzzer.beep();
+            }
+        }
+
+        
+
+        const char* data = mqtt_client.getData();
+        char* temp_data = new char(256);
+        strcpy(temp_data, data);
+
+        char* message = "";
+        strcpy(temp_data, message);
+        data = temp_data;
+
+        mqtt_client.data(data);
+        free(temp_data);
+    }
 }
 
