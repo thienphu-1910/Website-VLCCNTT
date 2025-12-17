@@ -15,7 +15,7 @@ const option = {
     password: password
 };
 
-const client = mqtt.connect(brokerUrl, option);
+const client = mqtt.connect(`mqtts://${brokerUrl}`, option);
 
 client.on("error", (error) => {
     console.error("MQTT Error: ", error.message);
