@@ -8,35 +8,39 @@
 #define ADC_MAX_VALUE       4095
 #define ADC_UNIT            ADC_UNIT_1
 
-FlameSensor::FlameSensor(adc_channel_t channel) {
-    _adc_channel = channel;
-    _adc_handle = NULL;
-    _latest_percentage = 0;
-}
+FlameSensor::FlameSensor(flame_sensor_config_t *config) {
+  if (config == NULL) {
+    ESP_LOGE(TAG, "args are invalid");
+    abort();
+  }
 
-void FlameSensor::start() {
-  // 1. Configure the ADC Unit (The Hardware Wrapper)
-  adc_oneshot_unit_init_cfg_t init_config = {};
-  init_config.unit_id = ADC_UNIT;
-  init_config.clk_src = ADC_RTC_CLK_SRC_DEFAULT;
+  _config = *config;
+  adc_oneshot_unit_init_cfg_t init_config = {
+    .unit_id = config->adc_unit,
+  };
+
   ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &_adc_handle));
 
-  // 2. Configure the specific Channel (The Pin)
-  adc_oneshot_chan_cfg_t config = {};
-  config.bitwidth = ADC_BIT_WIDTH;
-  config.atten = ADC_ATTEN;  
-  
-  ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, _adc_channel, &config));
+  adc_oneshot_chan_cfg_t channel_config = {
+    .atten = config->adc_atten,
+    .bitwidth = ADC_BITWIDTH_12,
+  };
+
+  ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, config->adc_channel, &channel_config));
+}
+
+FlameSensor::~FlameSensor() {
+  ESP_ERROR_CHECK(adc_oneshot_del_unit(_adc_handle));
 }
 
 int FlameSensor::getFlamePercentage() {
   int raw_value = 0;
   
   // Read the raw voltage level (0 - 4095)
-  ESP_ERROR_CHECK(adc_oneshot_read(_adc_handle, _adc_channel, &raw_value));
+  ESP_ERROR_CHECK(adc_oneshot_read(_adc_handle, _config.adc_channel, &raw_value));
   
   // Convert to Percentage    
-  int percentage = (raw_value * 100) / ADC_MAX_VALUE;
+  int percentage = ((ADC_MAX_VALUE - raw_value) * 100) / ADC_MAX_VALUE;
 
   // Safety clamp
   if (percentage < 0) percentage = 0;

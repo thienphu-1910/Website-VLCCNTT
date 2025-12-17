@@ -1,29 +1,32 @@
 #include "_led.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 
-LED::LED(gpio_num_t pin) {
-    _pin = pin;
+LED::LED(led_config_t *config) {
+    if (config == NULL) {
+        ESP_LOGE(TAG, "args are invalid");
+        abort();
+    }
+
+    _config = *config;
+    gpio_config_t configurations = {
+        .pin_bit_mask = config->pin,
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+
+    ESP_ERROR_CHECK(gpio_config(&configurations));
 }
 
-void LED::start() {
-    gpio_config_t led_config = {};
-    
-    led_config.pin_bit_mask = (1ULL << _pin);
-    led_config.mode = GPIO_MODE_OUTPUT;
-    led_config.pull_up_en = GPIO_PULLUP_DISABLE;
-    led_config.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    led_config.intr_type = GPIO_INTR_DISABLE;
-
-    ESP_ERROR_CHECK(gpio_config(&led_config));
-}
-
-void LED::blink(int times) {
-    for (int i = 0; i < times; i++) {
-        gpio_set_level(_pin, 1);
+void LED::blink() {
+    for (int i = 0; i < _config.blink_times; i++) {
+        gpio_set_level(_config.pin, 1);
         vTaskDelay(500 / portTICK_PERIOD_MS);
 
-        gpio_set_level(_pin, 0);
+        gpio_set_level(_config.pin, 0);
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }

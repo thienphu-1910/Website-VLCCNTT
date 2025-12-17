@@ -2,8 +2,24 @@
 #include "esp_log.h"
 #include "../config.h"
 
-MQTTClient::MQTTClient(const char* broker_uri) {
-    _broker_uri = broker_uri;
+MQTTClient::MQTTClient(mqtt_config_t* config) {
+    if (config == NULL) {
+        ESP_LOGE(TAG, "args are invalid");
+        abort();
+    }
+
+    _config = *config;
+
+    esp_mqtt_client_config_t mqtt_config = {};
+
+    mqtt_config.broker.address.uri = config->broker_uri;
+    mqtt_config.credentials.username = config->username;
+    mqtt_config.credentials.authentication.password = config->password;
+
+    _client = esp_mqtt_client_init(&mqtt_config);
+
+    esp_mqtt_client_register_event(_client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, nullptr);
+    esp_mqtt_client_start(_client);
 }
 
 MQTTClient::~MQTTClient() {
@@ -15,12 +31,8 @@ MQTTClient::~MQTTClient() {
     }
 }
 
-void MQTTClient::setData(const char* data) {
-    _data = data;
-}
-
-void MQTTClient::setTopic(const char* topic) {
-    _topic = topic;
+void MQTTClient::data(const char* data) {
+    _config.data = data;
 }
 
 void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_t event_id, void *event_data) {
@@ -31,7 +43,7 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "Connected");
-        message_id = esp_mqtt_client_subscribe(client, _topic, QOS);
+        message_id = esp_mqtt_client_subscribe(client, _config.topic, _config.qos);
         ESP_LOGI(TAG, "Subscribed. Message ID = %d", message_id);
         break;
 
@@ -41,7 +53,7 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
 
         case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "Subscribed");
-        message_id = esp_mqtt_client_publish(client, _topic, _data, strlen(_data), QOS, RETAIN);
+        message_id = esp_mqtt_client_publish(client, _config.topic, _config.data, strlen(_config.data), _config.qos, _config.retain);
         ESP_LOGI(TAG, "Published. Message ID = %d", message_id);
         break;
 
@@ -63,22 +75,9 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
     }
 }
 
-void MQTTClient::start() {
-    esp_mqtt_client_config_t mqtt_config = {};
-
-    mqtt_config.broker.address.uri = _broker_uri;
-    mqtt_config.credentials.username = MQTT_USERNAME;
-    mqtt_config.credentials.authentication.password = MQTT_PASSWORD;
-
-    _client = esp_mqtt_client_init(&mqtt_config);
-
-    esp_mqtt_client_register_event(_client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, nullptr);
-    esp_mqtt_client_start(_client);
-}
-
 bool MQTTClient::publish() {
     if (_client != nullptr) {
-        ESP_ERROR_CHECK(esp_mqtt_client_publish(_client, _topic, _data, strlen(_data), QOS, RETAIN));
+        ESP_ERROR_CHECK(esp_mqtt_client_publish(_client, _config.topic, _config.data, strlen(_config.data), _config.qos, _config.retain));
         return true;
     }
     

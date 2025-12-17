@@ -1,16 +1,19 @@
 #ifndef _SMOKE_SENSOR_H
 #define _SMOKE_SENSOR_H
 
+typedef struct {
+    gpio_num_t pin;
+} smoke_sensor_config_t;
+
 class SmokeSensor {
 private:
     inline static const char* TAG = "Smoke Sensor";
-    gpio_num_t _pin;
+    smoke_sensor_config_t _config;
+
     int _sensor_value;
 public:
-    SmokeSensor(gpio_num_t pin);
-    void start();
+    SmokeSensor(smoke_sensor_config_t *config);
     int getSensorValue();
-    void setSensorValue(int value);
     bool hasSmoke();
 };
 

@@ -3,13 +3,18 @@
 
 #include "driver/gpio.h"
 
+typedef struct {
+    gpio_num_t pin;
+    int blink_times;
+} led_config_t;
+
 class LED {
 private:
-    gpio_num_t _pin;
+    const char* TAG = "LED";
+    led_config_t _config;
 public:
-    LED(gpio_num_t pin);
-    void start();
-    void blink(int times);
+    LED(led_config_t *config);
+    void blink();
 };
 
 #endif
