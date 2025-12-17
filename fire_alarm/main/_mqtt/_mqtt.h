@@ -4,7 +4,6 @@
 #include <string>
 #include "esp_event.h"
 #include "mqtt_client.h"
-#include "../config.h"
 
 typedef struct {
     const char* broker_uri;
@@ -14,7 +13,7 @@ typedef struct {
     const char* password;
     int port;
     int qos;
-    int retain;;
+    int retain;
 } mqtt_config_t;
 
 class MQTTClient {
@@ -22,8 +21,6 @@ private:
     inline static const char* TAG = "MQTT Client";
     esp_mqtt_client_handle_t _client;
     static mqtt_config_t _config;
-
-    
 public:
     MQTTClient(mqtt_config_t* config);
     ~MQTTClient();

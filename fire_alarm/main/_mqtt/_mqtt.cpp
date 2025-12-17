@@ -1,6 +1,8 @@
 #include "_mqtt.h"
 #include "esp_log.h"
-#include "../config.h"
+#include "esp_crt_bundle.h"
+
+mqtt_config_t MQTTClient::_config;
 
 MQTTClient::MQTTClient(mqtt_config_t* config) {
     if (config == NULL) {
@@ -15,11 +17,12 @@ MQTTClient::MQTTClient(mqtt_config_t* config) {
     mqtt_config.broker.address.uri = config->broker_uri;
     mqtt_config.credentials.username = config->username;
     mqtt_config.credentials.authentication.password = config->password;
+    mqtt_config.broker.verification.crt_bundle_attach = esp_crt_bundle_attach;
 
     _client = esp_mqtt_client_init(&mqtt_config);
 
-    esp_mqtt_client_register_event(_client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, nullptr);
-    esp_mqtt_client_start(_client);
+    ESP_ERROR_CHECK(esp_mqtt_client_register_event(_client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, NULL));
+    ESP_ERROR_CHECK(esp_mqtt_client_start(_client));
 }
 
 MQTTClient::~MQTTClient() {
@@ -77,9 +80,12 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
 
 bool MQTTClient::publish() {
     if (_client != nullptr) {
-        ESP_ERROR_CHECK(esp_mqtt_client_publish(_client, _config.topic, _config.data, strlen(_config.data), _config.qos, _config.retain));
-        return true;
+        int message_id = esp_mqtt_client_publish(_client, _config.topic, _config.data, strlen(_config.data), _config.qos, _config.retain);
+        if (message_id == - 1) {
+            ESP_LOGE(TAG, "Failed to publish");
+            return false;
+        }
     }
-    
-    return false;
+
+    return true;
 }

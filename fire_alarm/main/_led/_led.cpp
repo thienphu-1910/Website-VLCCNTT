@@ -11,7 +11,7 @@ LED::LED(led_config_t *config) {
 
     _config = *config;
     gpio_config_t configurations = {
-        .pin_bit_mask = config->pin,
+        .pin_bit_mask = (1ULL << config->pin),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
