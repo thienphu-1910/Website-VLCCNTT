@@ -1,6 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import { HistoryRouter } from "./routes/history.route.js";
+import { LightRouter } from "./routes/light.route.js";
 
 export const app = express();
 
@@ -13,3 +15,5 @@ app.use(express.urlencoded({ extended: true}));
 
 // log
 app.use(morgan("dev"));
+app.use("/api/histories", HistoryRouter);
+app.use("/api/light", LightRouter);

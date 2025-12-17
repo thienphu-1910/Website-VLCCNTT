@@ -19,7 +19,7 @@ const AvatarDropdown = () => {
   }
 
   return (
-    <div className="h-fit w-30 bg-white absolute right-0 top-11 rounded-lg 
+    <div className="h-fit w-30 bg-white absolute right-2 top-13 rounded-lg 
                     flex flex-col gap-2 py-2 px-2">
       <button className="text-red-600 text-lg font-bold bg-none hover:bg-red-400 hover:text-white px-2 py-1
                           rounded-lg"

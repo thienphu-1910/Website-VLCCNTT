@@ -3,43 +3,23 @@ import ShieldLogo from "../components/ShieldLogo";
 import WebTitle from "../components/WebTitle";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { http } from "../libs/http";
 import UserAvatar from "../components/UserAvatar";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);  
   const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
     const unsub = onAuthStateChanged(auth, (u) => {
       if (u) {
-        const loadData = async () => {
-          try {
-            console.log("User found:", u.email);
-
-            const res = await http.get(`/users`);
-
-            if (isMounted) {
-              setUser(res.data.find((user) => user.email === u.email));
-              console.log("Data loaded:", res);
-              setTimeout(() => {
-                setLoading(false);
-              }, 3000);
-            }
-          } catch (error) {
-            console.error("Load user fail: ", error);
-            if (isMounted) {
-              setError(error);
-              setLoading(false);
-            }
-          }
-        };
-
-        loadData();
+        if (isMounted)
+          setUser({
+            uid: u.uid,
+            email: u.email,
+            avatar_url: "public/images/user1_avatar.jpeg",
+          });        
       } else {
         console.log("No user logged in");
         if (isMounted) setUser(null);
@@ -65,15 +45,14 @@ const Header = () => {
         <WebTitle className="text-base md:text-2xl" />
       </section>
       <section className="absolute left-1/2 transform -translate-x-1/2 z-0">
-        {!error && user && loading === false && (
+        {user && (
           <p className="font-bold font-header text-sm md:text-lg">
-            Welcome back, <strong className="text-sky-400">{user.name}</strong>
+            Welcome back, <strong className="text-sky-400">{user.email}</strong>
           </p>
         )}
       </section>
-      <section className="z-10">
-        {error && <></>}
-        {!error && user && loading === false && <UserAvatar user={user} />}
+      <section className="z-10">        
+        {user && <UserAvatar user={user} />}
       </section>
     </header>
   );
