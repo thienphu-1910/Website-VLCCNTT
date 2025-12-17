@@ -1,6 +1,6 @@
 #include "_buzzer.h"
-#include "freertos/task.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 Buzzer::Buzzer(gpio_num_t pin) {
     _pin = pin;

@@ -1,5 +1,6 @@
-#include "_flame_sensor.h"
 #include <math.h>
+#include "_flame_sensor.h"
+#include "esp_log.h"
 
 // ADC Attenuation: 11dB allows measuring up to ~3.1V (perfect for 3.3V logic)
 #define ADC_ATTEN           ADC_ATTEN_DB_12
@@ -16,14 +17,15 @@ FlameSensor::FlameSensor(adc_channel_t channel) {
 void FlameSensor::start() {
   // 1. Configure the ADC Unit (The Hardware Wrapper)
   adc_oneshot_unit_init_cfg_t init_config = {};
-  init_config.unit_id = ADC_UNIT,
-  init_config.clk_src = ADC_RTC_CLK_SRC_DEFAULT,  
+  init_config.unit_id = ADC_UNIT;
+  init_config.clk_src = ADC_RTC_CLK_SRC_DEFAULT;
   ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &_adc_handle));
 
   // 2. Configure the specific Channel (The Pin)
   adc_oneshot_chan_cfg_t config = {};
-  config.bitwidth = ADC_BIT_WIDTH,
-  config.atten = ADC_ATTEN,  
+  config.bitwidth = ADC_BIT_WIDTH;
+  config.atten = ADC_ATTEN;  
+  
   ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, _adc_channel, &config));
 }
 
