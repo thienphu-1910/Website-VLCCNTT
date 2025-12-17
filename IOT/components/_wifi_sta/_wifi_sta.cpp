@@ -124,3 +124,7 @@ bool WiFiStation::connect_wifi() {
 
     return status;
 }
+
+const char* WiFiStation::tag() {
+    return _instance->TAG;
+}

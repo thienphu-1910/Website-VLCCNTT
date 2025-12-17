@@ -23,6 +23,7 @@ public:
     ~WiFiStation();
     
     static bool connect_wifi();
+    static const char* tag();
 };
 
 #endif

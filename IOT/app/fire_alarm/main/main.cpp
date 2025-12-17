@@ -3,20 +3,26 @@
 #include "esp_netif.h"
 #include "nvs_flash.h"
 #include "esp_event.h"
-#include "config.h"
 #include "cJSON.h"
+#include "esp_log.h"
+
+#include "config.h"
 
 extern "C" {
     void app_main(void);
 }
-
 
 void app_main(void) {
     // Init bộ nhớ flash
     ESP_ERROR_CHECK(nvs_flash_init());
 
     // Kết nối Wifi
-    
+    bool status = WiFiStation::instance()->connect_wifi();
+    if (true != status) {
+        ESP_LOGE(WiFiStation::instance()->tag(), "Failed to connect to WiFi");
+        abort();
+    }
+
     // Khởi tạo Object MQTTClient (Hàm tạo sẽ kết nối với broker)
     MQTTClient mqtt_client(&mqtt_config);
     
