@@ -3,10 +3,8 @@
 #include "esp_log.h"
 
 Thermistor::Thermistor(const thermistor_config_t *config) {
-    esp_err_t ret = ESP_OK;
-
     if (config == NULL) {
-        ESP_LOGW(TAG, "arg is invalid");
+        ESP_LOGE(TAG, "arg is invalid");
         abort();
     }
 

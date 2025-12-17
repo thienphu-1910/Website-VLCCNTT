@@ -16,7 +16,7 @@ typedef struct {
 
 class Thermistor {
 private:
-    inline static const char *TAG = "Thermistor";
+    const char *TAG = "Thermistor";
 
     thermistor_config_t _config;
     adc_cali_handle_t _adc_cali_handle;

@@ -3,13 +3,17 @@
 
 #include "driver/gpio.h"
 
+typedef struct {
+    gpio_num_t pin;
+} buzzer_config_t;
+
 class Buzzer {
 private:
     const char* TAG = "Buzzer";
-    gpio_num_t _pin;
+    buzzer_config_t _config;
+
 public:
-    Buzzer(gpio_num_t pin);
-    void start();
+    Buzzer(const buzzer_config_t *config);
     void beep(int times);
 };
 
