@@ -16,5 +16,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const auth = admin.auth();
+console.log(db.collection("user").get("deviceId"));
 
 export { admin, db, auth };

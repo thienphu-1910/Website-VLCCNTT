@@ -1,5 +1,5 @@
 import { sendPushNotifications } from "../config/pushsafer.js";
-import { saveSensorData } from "./firebase_controller.js";
+import { saveSensorData } from "./sensor.logs.service.js";
 
 const THRESHOLDS = {
     temperature: {max: 50, label: "Temperature High"},
@@ -17,11 +17,11 @@ export const handleIncoming = async (topic, buffer) => {
 
     try {
         const payload = JSON.parse(buffer.toString());
-        const { deviceId, triggerManual, ...sensor_data } = payload;
+        const { deviceID, triggerType, ...sensorData } = payload;
 
         const alerts = []
 
-        for (const [key, val] of Object.entries(sensor_data)) {
+        for (const [key, val] of Object.entries(sensorData)) {
             const rule = THRESHOLDS[key];
 
             if (rule) {
@@ -37,7 +37,7 @@ export const handleIncoming = async (topic, buffer) => {
 
             await sendPushNotifications(msg, title, device_id);
         } else {
-            await saveSensorData(deviceId, triggerManual, sensor_data);
+            await saveSensorData(deviceID, triggerType, sensorData);
         }
     } catch (e) {
         console.error("Error: ", e);        

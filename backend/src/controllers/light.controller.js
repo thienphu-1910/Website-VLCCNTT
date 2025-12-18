@@ -1,5 +1,5 @@
 import { client } from "../config/mqtt.js";
-const lightTopic = "firealarm/light";
+const lightTopic = "fire_alarm/nhom7/light";
 
 client.on('connect', () => {
   console.log("Light Controller: Client connect successfully");

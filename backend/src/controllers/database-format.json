@@ -1,0 +1,31 @@
+{
+    "databasePrototype": {
+        "collection1": {
+            "document1": {
+                "field1": "datatype"
+            }
+        }
+    },
+    
+    "realDatabase": {
+        "tips": {
+            "tipId": {
+                "content": ""
+            }
+        },
+
+        "devices": {
+            "deviceId": {
+                "userId": "str",
+                "sensorLogs": {
+                    "timestamp": {
+                        "flame": "number",
+                        "smoke": "number",
+                        "temperature": "number",
+                        "trigger": "number"
+                    }
+                }
+            }
+        }
+    }
+}
