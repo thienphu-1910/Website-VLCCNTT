@@ -95,17 +95,13 @@ const LoginForm = () => {
               {...register("userPassword", { required: true })}                                          
             />
           </section>
-          <section className=" mt-1">
-            <p className="text-left w-fit text-xs text-black cursor-pointer hover:text-blue-400 underline">
-              Forgot password?
-            </p>
-          </section>
+          
         </main>
-        <section className="w-fit self-end">
+        <section className="w-fit self-end mt-4">
           <button
             type="submit"
             className="bg-red-500 text-xl py-2 px-5 rounded-xl hover:shadow-md transition-all duration-300
-                       active:outline-none text-white hover:shadow-red-400 hover:scale-102"
+                       active:outline-none active:scale-98 active:bg-red-300 text-white hover:shadow-red-400 hover:scale-102"
           >
             Login
           </button>

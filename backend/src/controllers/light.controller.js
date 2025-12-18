@@ -1,5 +1,5 @@
 import { client } from "../config/mqtt.js";
-const lightTopic = "firealarm/light";
+const lightTopic = "fire_alarm/nhom7/lights";
 
 client.on('connect', () => {
   console.log("Light Controller: Client connect successfully");
@@ -12,9 +12,9 @@ export const LightController = {
       return res.status(400).json({ error: 'Invalid state. Use ON or OFF.' });
     }
 
-    const authLightTopic = `${lightTopic}/${req.user.uid}`
+    //const authLightTopic = `${lightTopic}/${req.user.uid}`
 
-    client.publish(authLightTopic, state, (err) => {
+    client.publish(lightTopic, state, (err) => {
       if (err) {
         console.log("Light Controller error: ", err);
         return res.status(500).json({ message: "Failed to signal device" });

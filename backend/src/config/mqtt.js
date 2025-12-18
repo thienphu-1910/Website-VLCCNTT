@@ -1,7 +1,7 @@
 import mqtt from "mqtt";
 
 const brokerUrl = process.env.MQTT_BROKER_URI || '';
-const clientId = process.env.MQTT_CLIENT_ID || '';
+const clientId = 'my_client_' + Math.random().toString(16).substring(2, 8);
 const username = process.env.MQTT_USERNAME || '';
 const password = process.env.MQTT_PASSWORD || '';
 const port = process.env.MQTT_PORT || 8883;
