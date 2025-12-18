@@ -1,8 +1,8 @@
-import HistoryList from "../components/HistoryList";
+import SensorLogsList from "../components/SensorLogsList";
 
 const HistoryPage = () => {
   return (
-    <HistoryList />
+    <SensorLogsList />
   );
 }
 

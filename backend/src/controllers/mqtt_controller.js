@@ -7,7 +7,9 @@ const retain = Boolean(process.env.RETAIN) || false;
 
 function init() {
     client.on("connect", () => {
+        console.log("Connected to MQTT");
         client.subscribe(topic);
+        console.log("Subscribe to topic: ", topic);
     });
 
     client.on("message", (topic, message) => {

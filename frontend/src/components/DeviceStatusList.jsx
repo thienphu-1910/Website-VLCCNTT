@@ -12,7 +12,7 @@ import { FaRegBell } from "react-icons/fa6";
 import { GrDocumentSound } from "react-icons/gr";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { ImFire } from "react-icons/im";
-import { HistoryApi } from "../api/history.api";
+import { SensorLogsApi } from "../api/sensor-logs.api";
 import { LightApi } from "../api/light.api";
 
 //grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
@@ -77,7 +77,7 @@ const DeviceStatusList = ({ className = "" }) => {
         timestamp: new Date().toISOString(),       
       };
       try {
-        await HistoryApi.postHistory(newHistory);
+        await SensorLogsApi.postHistory(newHistory);
       } catch (error) {
         console.error("Failed to log alarm history:", error);
       }
