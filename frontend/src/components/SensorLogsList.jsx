@@ -7,12 +7,12 @@ import { FaRegBell } from "react-icons/fa6";
 import { GrDocumentSound } from "react-icons/gr";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { ImFire } from "react-icons/im";
-import { HistoryApi } from "../api/history.api";
+import { SensorLogsApi } from "../api/sensor-logs.api";
 import { useEffect, useState } from "react";
 import { formatCustomDate } from "../libs/DateTimeFormat";
 
-const HistoryList = () => {
-  const [deviceHistories, setDeviceHistories] = useState([]);
+const SensorLogsList = () => {
+  const [deviceLogs, setDeviceLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,15 +23,15 @@ const HistoryList = () => {
 
   useEffect(() => {
     let isMounted = true;
-    const loadHistories = async () => {
+    const loadSensorLogs = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const respone = await HistoryApi.getAll();
+        const respone = await SensorLogsApi.getAll();
         //console.log(respone);
         if (isMounted) {
-          setDeviceHistories(respone?.data || []);
+          setDeviceLogs(respone?.data || []);
         }
       } catch (err) {
         if (isMounted) {
@@ -44,7 +44,7 @@ const HistoryList = () => {
       }
     }
 
-    loadHistories();
+    loadSensorLogs();
 
     return () => {
       isMounted = false;
@@ -57,8 +57,8 @@ const HistoryList = () => {
       {error && (<div>Error</div>)}
       {!loading && !error && (
         <ul className="w-fit flex flex-col justify-center items-center gap-5 my-5">
-        {deviceHistories.length > 0 && 
-        deviceHistories.map((h, i) => (
+        {deviceLogs.length > 0 && 
+        deviceLogs.map((h, i) => (
           <li key={i + 1}>
             <DeviceStatusCard className="h-fit w-50 md:w-150">
               <header className="bg-blue-200 h-fit w-full rounded-xl mb-4 px-2 py-1 font-bold text-blue-600">
@@ -124,4 +124,4 @@ const HistoryList = () => {
   )
 }
 
-export default HistoryList;
+export default SensorLogsList;
