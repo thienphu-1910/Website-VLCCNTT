@@ -25,9 +25,9 @@ LED::LED(led_config_t *config) {
 void LED::blink() {
     for (int i = 0; i < _config.blink_times; i++) {
         gpio_set_level(_config.pin, 1);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
 
         gpio_set_level(_config.pin, 0);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

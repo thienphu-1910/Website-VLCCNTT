@@ -66,11 +66,10 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
             ESP_LOGI(TAG, "Disconnected.");
             break;
 
-        case MQTT_EVENT_SUBSCRIBED:
+        case MQTT_EVENT_SUBSCRIBED: {
             ESP_LOGI(TAG, "Subscribed.");
-            message_id = esp_mqtt_client_publish(client, _config.topic, _config.data, strlen(_config.data), _config.qos, _config.retain);
-            ESP_LOGI(TAG, "Published. Message ID = %d.", message_id);
             break;
+        }
 
         case MQTT_EVENT_UNSUBSCRIBED:
             ESP_LOGI(TAG, "Unsubscribed.");
@@ -86,22 +85,23 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
 
         case MQTT_EVENT_DATA: {
             ESP_LOGI(TAG, "Received data");
-            if (strcmp(event->topic, "fire_alarm/nhom7/lights")) {
-                if (event->data_len == 2) {
-                    char temp[3];
-                    memcpy(temp, event->data, event->data_len);
-                    temp[2] = '\0';
-
-                    if (strcmp(temp, "ON")) light_trigger = 1;
+            const char *topic_light = "fire_alarm/nhom7/light";
+            if (event->topic_len == strlen(topic_light) && 
+                strncmp(event->topic, topic_light, event->topic_len) == 0) {
+                
+                if (event->data_len == 2 && strncmp(event->data, "ON", 2) == 0) {
+                    light_trigger = 1;
+                    ESP_LOGI(TAG, "Light Triggered ON");
                 }
             } 
-            else if (strcmp(event->topic, "fire_alarm/nhom7/buzzer")) {
-                if (event->data_len == 2) {
-                    char temp[3];
-                    memcpy(temp, event->data, event->data_len);
-                    temp[2] = '\0';
-
-                    if (strcmp(temp, "ON")) buzzer_trigger = 1;
+            
+            const char *topic_buzzer = "fire_alarm/nhom7/buzzer";
+            if (event->topic_len == strlen(topic_buzzer) && 
+                    strncmp(event->topic, topic_buzzer, event->topic_len) == 0) {
+                
+                if (event->data_len == 2 && strncmp(event->data, "ON", 2) == 0) {
+                    buzzer_trigger = 1;
+                    ESP_LOGI(TAG, "Buzzer Triggered ON");
                 }
             }
             
