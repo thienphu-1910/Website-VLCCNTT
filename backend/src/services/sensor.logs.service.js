@@ -1,8 +1,6 @@
 import { db } from "../config/firebaseAdmin.js";
-import { Chart } from 'chart.js/auto'
 import { MqttService } from "./mqtt.service.js";
 
-// collection path: devices/device001/sensorLogs/timestamp
 const path = {
   root: "users",
   subcollection: "devices"
@@ -22,6 +20,19 @@ export const saveSensorLog = async ({deviceId, trigger, sensorsData}) => {
       timestamp: timestamp.toISOString(),
       trigger: trigger
     });
+}
+
+export const saveSensorData = () => {
+  try {
+    const saveData = async (data) => {
+      const { deviceID, triggerType, ...sensorsData } = data;
+      await saveSensorLog(deviceID, triggerType, sensorsData);
+    }
+
+    MqttService.subscribeToTopic(saveData);
+  } catch (err) {
+    console.log("Save sensor Data error: ", err.message);
+  }
 }
 
 // export const saveSensorData = async (deviceId, trigger, sensorsData) => {
@@ -60,18 +71,5 @@ export const loadSensorData = async (deviceId) => {
   } catch (e) {
     console.log(`Error: ${e.message}.`);
     return {};
-  }
-}
-
-export const saveSensorData = () => {
-  try {
-    const saveData = async (data) => {
-      const { deviceID, triggerType, ...sensorsData } = data;
-      await saveSensorLog(deviceID, triggerType, sensorsData);
-    }
-
-    MqttService.subscribeToTopic(saveData);
-  } catch (err) {
-    console.log("Save sensor Data error: ", err.message);
   }
 }
