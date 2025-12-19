@@ -2,18 +2,19 @@ import { http } from "../libs/http.js";
 import { auth } from "../config/firebase.js";
 
 const SensorLogsEndpoints = {
-  common: "/sensorlogs",
+  root: "/sensorlogs",
+  real_time: "events",
 };
 
 export const SensorLogsApi = {
-  getAll: async () => {
-    const respone = await http.get(`${SensorLogsEndpoints.common}`);
+  getAll: async (deviceId) => {
+    const respone = await http.get(`${SensorLogsEndpoints.root}/${deviceId}`);
     return respone;
   },
-  postSensorLogs: async (data) => {
+  updateSensorLogs: async (data) => {
     const userId = auth?.currentUser?.uid;
     if (!userId) return;
-    const respone = await http.post(`${SensorLogsEndpoints.common}`, data);
+    const respone = await http.post(`${SensorLogsEndpoints.root}`, data);
     return respone;
   },
 };

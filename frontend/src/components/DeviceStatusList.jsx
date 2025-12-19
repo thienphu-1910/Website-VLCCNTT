@@ -14,10 +14,12 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import { ImFire } from "react-icons/im";
 import { SensorLogsApi } from "../api/sensor-logs.api";
 import { LightApi } from "../api/light.api";
+import { BuzzerApi } from "../api/buzzer.api";
 
 //grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
 const DeviceStatusList = ({ className = "" }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [deviceIndicator, setDeviceIndicator] = useState(null);
   const [triggered, setTriggered] = useState(() => {
     const saved = localStorage.getItem("alarm");
     return saved === "true"; // Returns true if "true", false otherwise
@@ -39,6 +41,7 @@ const DeviceStatusList = ({ className = "" }) => {
   };
 
   useEffect(() => {
+    let eventSource = null;
     const unsub = onAuthStateChanged(auth, (user) => {
       const params = new URLSearchParams(searchParams);
       if (user) {
@@ -46,6 +49,16 @@ const DeviceStatusList = ({ className = "" }) => {
           params.set("email", user.email);
           setSearchParams(params);
         }
+
+        if (eventSource) eventSource.close();
+
+        eventSource = new EventSource(`${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`); // Server sent event API URL
+        eventSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log(data)
+          setDeviceIndicator(data.sensorData);
+        }
+
       } else {
         if (params.has("email")) {
           params.delete("email");
@@ -54,7 +67,12 @@ const DeviceStatusList = ({ className = "" }) => {
       }
     });
 
-    return () => unsub();
+    return () => {
+      unsub();
+      if (eventSource) {
+        eventSource.close();
+      }
+    }
     // note: searchParams here is stable from the hook, setSearchParams is stable
   }, [searchParams, setSearchParams]);
 
@@ -65,25 +83,8 @@ const DeviceStatusList = ({ className = "" }) => {
   const onClick = async () => {  
     const newValue = !triggered;
     await LightApi.postSignal(newValue ? "ON" : "OFF");
+    await BuzzerApi.postSignal(newValue? "ON" : "OFF");
     setTriggered(newValue);
-    
-    if (newValue === true) {
-      console.log("Alarm activated - Logging to History...");
-
-      const newHistory = {
-        flame_percentage: deviceStatus.flame_percentage,
-        smoke_status: deviceStatus.smoke_status,
-        temperature: deviceStatus.temperature,
-        timestamp: new Date().toISOString(),       
-      };
-      try {
-        await SensorLogsApi.postHistory(newHistory);
-      } catch (error) {
-        console.error("Failed to log alarm history:", error);
-      }
-    } else {
-      console.log("Alarm stopped - No history log needed.");
-    }
   };
 
   return (
@@ -117,15 +118,15 @@ const DeviceStatusList = ({ className = "" }) => {
         </section>
         <div className="px-3 py-1 rounded-full flex flex-col gap-2 justify-center items-start">
           <p className="text-2xl text-blue-500">
-            {deviceStatus.flame_percentage}{" "}
+            {deviceIndicator?.flame_percentage || ""}{" "}
             <span className="text-base text-gray-500">%</span>
           </p>
           <div className="w-full h-2 bg-gray-400/40 rounded-full">
             <div
               style={{
-                width: `${deviceStatus.flame_percentage}%`,
+                width: `${deviceIndicator?.flame_percentage || 0}%`,
                 backgroundSize: `${
-                  100 * (100 / `${deviceStatus.flame_percentage}`)
+                  100 * (100 / `${deviceIndicator?.flame_percentage || 0}`)
                 }% 100%`,
               }}
               className="h-2 bg-linear-to-r from-green-400 from-30% via-yellow-300 via-55% to-red-500 to-100% rounded-full"
@@ -144,7 +145,7 @@ const DeviceStatusList = ({ className = "" }) => {
             <h3 className="text-black font-bold text-lg">Temperature</h3>
           </section>
           <p className="text-2xl text-orange-500 flex flex-row items-start">
-            {deviceStatus.temperature}
+            {deviceIndicator?.temperature || ""}
             <RiCelsiusFill className="fill-gray-500 size-5" />
           </p>
         </div>
@@ -158,7 +159,7 @@ const DeviceStatusList = ({ className = "" }) => {
           </section>
           <div className="bg-green-200/50 font-bold text-green-400 w-fit px-3 py-1 rounded-full flex flex-row gap-2 justify-center items-center">
             <div className="size-2 rounded-full bg-green-500"></div>
-            <p>{smokeStatusMapping[deviceStatus.smoke_status]}</p>
+            <p>{smokeStatusMapping[deviceIndicator?.smoke || 0]}</p>
           </div>
         </div>
       </DeviceStatusCard>

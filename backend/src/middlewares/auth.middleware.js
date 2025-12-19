@@ -18,6 +18,7 @@ export const verifyToken = async (req, res, next) => {
     // 4. ATTACH user info to the request object
     // Now any route coming after this middleware can access req.user
     req.user = decodedToken; 
+    //console.log(req.user);
     
     // Proceed to the next controller
     next();

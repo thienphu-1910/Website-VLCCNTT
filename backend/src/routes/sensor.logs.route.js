@@ -4,7 +4,8 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const SensorLogsRouter = express.Router();
 
-SensorLogsRouter.get("/sensorlogs", verifyToken, SensorLogsController.getRecords);
-SensorLogsRouter.post("/sensorlogs", verifyToken, SensorLogsController.createRecord);
+SensorLogsRouter.get("/:id", verifyToken, SensorLogsController.getRecords);
+//SensorLogsRouter.post("/", verifyToken, SensorLogsController.createRecord);
+SensorLogsRouter.get("/events/:id", SensorLogsController.getRealTimeRecord);
 
 export { SensorLogsRouter };

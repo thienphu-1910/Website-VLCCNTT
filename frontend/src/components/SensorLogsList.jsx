@@ -1,127 +1,241 @@
-import DeviceStatusCard from "./DeviceStatusCard";
-import { IoWarningOutline } from "react-icons/io5";
-import { CiWavePulse1, CiTempHigh } from "react-icons/ci";
-import { RiCelsiusFill } from "react-icons/ri";
-import { LuAlarmSmoke } from "react-icons/lu";
-import { FaRegBell } from "react-icons/fa6";
-import { GrDocumentSound } from "react-icons/gr";
-import { HiOutlineLightBulb } from "react-icons/hi";
-import { ImFire } from "react-icons/im";
-import { SensorLogsApi } from "../api/sensor-logs.api";
+// import DeviceStatusCard from "./DeviceStatusCard";
+// import { IoWarningOutline } from "react-icons/io5";
+// import { CiWavePulse1, CiTempHigh } from "react-icons/ci";
+// import { RiCelsiusFill } from "react-icons/ri";
+// import { LuAlarmSmoke } from "react-icons/lu";
+// import { FaRegBell } from "react-icons/fa6";
+// import { GrDocumentSound } from "react-icons/gr";
+// import { HiOutlineLightBulb } from "react-icons/hi";
+// import { ImFire } from "react-icons/im";
+// import { SensorLogsApi } from "../api/sensor-logs.api";
 import { useEffect, useState } from "react";
-import { formatCustomDate } from "../libs/DateTimeFormat";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../config/firebase";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale // Import TimeScale
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import 'chartjs-adapter-date-fns'; // Import the adapter!
+import { useMemo } from "react";
+
+// Register the TimeScale
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+);
+
 
 const SensorLogsList = () => {
   const [deviceLogs, setDeviceLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const smokeStatusMapping = {
-    0: "Clear",
-    1: "Smoke",
-  };
+  const [flameData, setFlameData] = useState([]);
+  const [smokeData, setSmokeData] = useState([]);
+  const [tempData, setTempData] = useState([]);
 
   useEffect(() => {
-    let isMounted = true;
-    const loadSensorLogs = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    let activeEventSource = null;
 
-        const respone = await SensorLogsApi.getAll();
-        //console.log(respone);
-        if (isMounted) {
-          setDeviceLogs(respone?.data || []);
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
+      if (activeEventSource) {
+        activeEventSource.close();
+      }
+
+      if (user) {
+        console.log("User authenticated, starting SSE stream...");
+        
+        activeEventSource = new EventSource(`${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`);
+        console.log(`${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`)
+
+        activeEventSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log(data);
+          // Update all states
+          setDeviceLogs((prev) => [...prev, data]);
+          
+          {/* x, y format where x stands for timestamp (ISO string) and y stands for specified sensor value */}
+          setFlameData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.flame_percentage }]);
+          setSmokeData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.smoke }]);
+          setTempData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.temperature }]);
+        };
+
+        activeEventSource.onerror = (err) => {
+          console.error("SSE Error:", err);
+          activeEventSource.close();
+        };
+      }
+    });
+
+    // Cleanup Function in
+    return () => {
+      unsubAuth();
+      if (activeEventSource) {
+        console.log("Closing SSE connection...");
+        activeEventSource.close();
+      }
+    };
+  }, []);
+
+  const normalizedFlame = useMemo(() => {
+    const min = flameData.reduce((min, current) => {
+      return current.y < min.y ? current : min;
+    }, flameData[0]);
+    const max = flameData.reduce((max, current) => {
+      return current.y > max.y ? current : max;
+    }, flameData[0]);
+
+    return flameData.map((d) => {
+      return {
+        ...d,
+        y: (d.y - min.y) / (max.y - min.y),
+      }
+    });
+  }, [flameData]);
+
+  const normalizedSmoke = useMemo(() => {
+    const min = smokeData.reduce((min, current) => {
+      return current.y < min.y ? current : min;
+    }, smokeData[0]);
+    const max = smokeData.reduce((max, current) => {
+      return current.y > max.y ? current : max;
+    }, smokeData[0]);
+
+    return smokeData.map((d) => {
+      return {
+        ...d,
+        y: (d.y - min.y) / (max.y - min.y),
+      }
+    });
+  }, [smokeData]);
+
+  const normalizedTemperature = useMemo(() => {
+    const min = tempData.reduce((min, current) => {
+      return current.y < min.y ? current : min;
+    }, tempData[0]);
+    const max = tempData.reduce((max, current) => {
+      return current.y > max.y ? current : max;
+    }, tempData[0]);
+
+    return tempData.map((d) => {
+      return {
+        ...d,
+        y: (d.y - min.y) / (max.y - min.y),
+      }
+    });
+  }, [tempData]);
+
+  const data = {
+    datasets: [
+      {
+        label: "Flame Percentage",
+        data: normalizedFlame,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: "Smoke",
+        data: normalizedSmoke,
+        borderColor: 'rgb(46, 204, 113)',
+        backgroundColor: 'rgba(46, 204, 113, 0.5)',
+      },
+      {
+        label: "Temperature (Celcius)",
+        data: normalizedTemperature,
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      }
+    ],
+  }
+
+
+const options = {
+    responsive: true,
+    scales: {
+      x: {
+        type: 'time', // CRITICAL: Use time scale, not category
+        time: {
+          unit: 'day', // Force the major ticks to be Days
+          displayFormats: {
+            day: 'EEEE' // Format code for "Monday", "Tuesday", etc.
+          }
+        },
+        title: {
+          display: true,
+          text: 'Time of Week'
         }
-      } catch (err) {
-        if (isMounted) {
-          setError(err);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+      },
+      y: {
+        beginAtZero: true
       }
     }
-
-    loadSensorLogs();
-
-    return () => {
-      isMounted = false;
-    }
-  }, [])
+  };
 
   return (
     <>
-      {loading && (<div>Loading...</div>)}
-      {error && (<div>Error</div>)}
-      {!loading && !error && (
-        <ul className="w-fit flex flex-col justify-center items-center gap-5 my-5">
-        {deviceLogs.length > 0 && 
-        deviceLogs.map((h, i) => (
-          <li key={i + 1}>
-            <DeviceStatusCard className="h-fit w-50 md:w-150">
-              <header className="bg-blue-200 h-fit w-full rounded-xl mb-4 px-2 py-1 font-bold text-blue-600">
-                {formatCustomDate(h.timestamp)}
-              </header>
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] h-fit gap-10 w-full">
-                <div className="flex flex-col items-start gap-5 ">
-                  <section className="w-full flex flex-row gap-2 items-center">
-                    <ImFire
-                      className="fill-red-400 stroke-red-400 stroke-1 size-9 
-                                                bg-red-200/50 rounded-lg p-1"
-                    />
-                    <h3 className="text-black font-bold text-lg">Flame Percentage</h3>
-                  </section>
-                  <div className="px-3 py-1 w-full rounded-full flex flex-col gap-2 justify-center items-start">
-                    <p className="text-2xl text-blue-500">
-                      {h.flame_percentage} <span className="text-base text-gray-500">%</span>
-                    </p>
-                    <div className="w-full h-2 bg-gray-400/40 rounded-full">
-                      <div
-                        style={{
-                          width: `${h.flame_percentage}%`,
-                          backgroundSize: `${100 * (100 / `${h.flame_percentage}`)}% 100%`,
-                        }}
-                        className="h-2 bg-linear-to-r w-full from-green-400 from-30% via-yellow-300 via-55% to-red-500 to-100% rounded-full"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-start gap-5 ">
-                  <section className="w-full flex flex-row gap-2 items-center">
-                    <CiTempHigh
-                      className="fill-orange-400 stroke-orange-400 size-9 
-                                                bg-orange-200/50 rounded-lg p-1"
-                    />
-                    <h3 className="text-black font-bold text-lg">Temperature</h3>
-                  </section>
-                  <p className="text-2xl text-orange-500 flex flex-row items-start">
-                    {h.temperature}
-                    <RiCelsiusFill className="fill-gray-500 size-5" />
-                  </p>
-                </div>
-                <div className="flex flex-col gap-5">
-                  <section className="w-full flex flex-row gap-2 items-center">
-                    <LuAlarmSmoke
-                      className="fill-gray-300 stroke-gray-500 size-9 
-                                                bg-black/7 rounded-lg p-1"
-                    />
-                    <h3 className="text-black font-bold text-lg">Smoke</h3>
-                  </section>
-                  <div className="bg-green-200/50 font-bold text-green-400 w-fit px-3 py-1 rounded-full flex flex-row gap-2 justify-center items-center">
-                    <div className="size-2 rounded-full bg-green-500"></div>
-                    <p>{smokeStatusMapping[h.smoke_status]}</p>
-                  </div>
-                </div>
-              </div>
-            </DeviceStatusCard>
-          </li>
-        ))}
-      </ul>
-      )}
+    <Line options={options} data={data} />
     </>
   )
-}
+ }
 
 export default SensorLogsList;
+
+
+
+
+// const data = {
+//     datasets: [
+//       {
+//         label: "Flame Percentage",
+//         data: flameData,
+//         borderColor: 'rgb(255, 99, 132)',
+//         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+//       },
+//       {
+//         label: "Smoke",
+//         data: smokeData,
+//         borderColor: 'rgb(46, 204, 113)',
+//         backgroundColor: 'rgba(46, 204, 113, 0.5)',
+//       },
+//       {
+//         label: "Temperature (Celcius)",
+//         data: tempData,
+//         borderColor: 'rgb(53, 162, 235)',
+//         backgroundColor: 'rgba(53, 162, 235, 0.5)',
+//       }
+//     ],
+//   }
+
+
+// const options = {
+//     responsive: true,
+//     scales: {
+//       x: {
+//         type: 'time', // CRITICAL: Use time scale, not category
+//         time: {
+//           unit: 'day', // Force the major ticks to be Days
+//           displayFormats: {
+//             day: 'EEEE' // Format code for "Monday", "Tuesday", etc.
+//           }
+//         },
+//         title: {
+//           display: true,
+//           text: 'Time of Week'
+//         }
+//       },
+//       y: {
+//         beginAtZero: true
+//       }
+//     }
+//   };

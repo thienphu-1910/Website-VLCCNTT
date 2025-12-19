@@ -1,5 +1,5 @@
 import { sendPushNotifications } from "../config/pushsafer.js";
-import { saveSensorData } from "./sensor.logs.service.js";
+import { saveSensorData } from "../services/sensor.logs.service.js";
 
 const THRESHOLDS = {
     temperature: {max: 50, label: "Temperature High"},
@@ -13,8 +13,7 @@ const device_id = process.env.DEVICE_ID || '';
 export const handleIncoming = async (topic, buffer) => {
     if (topic != target_topic) {
         return;
-    }
-
+    }    
     try {
         const payload = JSON.parse(buffer.toString());
         const { deviceID, triggerType, ...sensorData } = payload;
@@ -36,9 +35,9 @@ export const handleIncoming = async (topic, buffer) => {
             const msg = alerts.join('\n');
 
             await sendPushNotifications(msg, title, device_id);
-        } else {
-            await saveSensorData(deviceID, triggerType, sensorData);
-        }
+        } 
+
+        await saveSensorData(deviceID, triggerType, sensorData);
     } catch (e) {
         console.error("Error: ", e);        
     }
