@@ -5,7 +5,6 @@
 #include "esp_adc/adc_oneshot.h"
 
 typedef struct {
-    adc_unit_t unit;
     adc_atten_t atten;
     adc_channel_t channel;
     uint32_t b_value;
@@ -22,7 +21,7 @@ private:
     adc_cali_handle_t _adc_cali_handle;
     adc_oneshot_unit_handle_t _adc_handle;
 public:
-    Thermistor(const thermistor_config_t *config);
+    Thermistor(const thermistor_config_t *config, adc_oneshot_unit_handle_t adc_handle);
     ~Thermistor();
 
     float temperature();

@@ -9,18 +9,14 @@
 #define ADC_MAX_VALUE       4095
 #define ADC_UNIT            ADC_UNIT_1
 
-FlameSensor::FlameSensor(flame_sensor_config_t *config) {
+FlameSensor::FlameSensor(flame_sensor_config_t *config, adc_oneshot_unit_handle_t adc_handle) {
     if (config == NULL) {
         ESP_LOGE(TAG, "Failed to initialize: config is NULL");
         abort();
     }
 
     _config = *config;
-    adc_oneshot_unit_init_cfg_t init_config = {
-        .unit_id = config->adc_unit,
-    };
-
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &_adc_handle));
+    _adc_handle = adc_handle;
 
     adc_oneshot_chan_cfg_t channel_config = {
         .atten = config->adc_atten,
@@ -28,10 +24,6 @@ FlameSensor::FlameSensor(flame_sensor_config_t *config) {
     };
 
     ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, config->adc_channel, &channel_config));
-}
-
-FlameSensor::~FlameSensor() {
-    ESP_ERROR_CHECK(adc_oneshot_del_unit(_adc_handle));
 }
 
 int FlameSensor::getFlamePercentage() {

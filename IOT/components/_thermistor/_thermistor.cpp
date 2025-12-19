@@ -3,17 +3,14 @@
 
 #include "include/_thermistor.h"
 
-Thermistor::Thermistor(const thermistor_config_t *config) {
+Thermistor::Thermistor(const thermistor_config_t *config, adc_oneshot_unit_handle_t adc_handle) {
     if (config == NULL) {
         ESP_LOGE(TAG, "Failed to initialize: config is NULL.");
         abort();
     }
 
     _config = *config;
-    adc_oneshot_unit_init_cfg_t init_config = {
-        .unit_id = config->unit,
-    };
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &_adc_handle));
+    _adc_handle = adc_handle;
 
     adc_oneshot_chan_cfg_t chan_config = {
         .atten = config->atten,
@@ -22,7 +19,7 @@ Thermistor::Thermistor(const thermistor_config_t *config) {
     ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, config->channel, &chan_config));
 
     adc_cali_line_fitting_config_t cali_config = {
-        .unit_id = config->unit,
+        .unit_id = ADC_UNIT_1,
         .atten = config->atten,
         .bitwidth = ADC_BITWIDTH_12,
     };

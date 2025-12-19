@@ -20,16 +20,37 @@ void app_main(void) {
         ESP_LOGE(WiFiStation::instance()->tag(), "Failed to connect to WiFi");
         abort();
     }
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
 
     MQTTClient mqtt_client(&mqtt_config);
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+
     Buzzer buzzer(&buzzer_config);
+    LED led(&led_config);
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    adc_oneshot_unit_handle_t adc_handle;
+    adc_oneshot_unit_init_cfg_t config = {
+        .unit_id = ADC_UNIT_1,
+    };
 
-    while (true) {
-        if (mqtt_client.buzzer_trigger == 1) {
-            buzzer.beep();
-        }
-        mqtt_client.buzzer_trigger = 0;
+    ESP_ERROR_CHECK(adc_oneshot_new_unit(&config, &adc_handle));
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    SmokeSensor smoke_sensor(&smoke_sensor_config);
+    FlameSensor flame_sensor(&flame_sensor_config, adc_handle);
+    Thermistor thermistor(&thermistor_config, adc_handle);
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    buzzer.beep();
+
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    led.blink();
+
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    std::cout << smoke_sensor.getSensorValue() << std::endl;
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    std::cout << flame_sensor.getFlamePercentage() << std::endl;
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    std::cout << thermistor.temperature() << std::endl;
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
 }
