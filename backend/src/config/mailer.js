@@ -7,16 +7,6 @@ dotenv.config();
 
 const nodemailer = require("nodemailer");
 
-// transport
-//   .sendMail({
-//     from: sender,
-//     to: "viduydmm@gmail.com",
-//     subject: "You are awesome!",
-//     text: "Congrats for sending test email with Mailtrap!",
-//     category: "Integration Test",
-//   })
-//   .then(console.log, console.error);
-
 function alertEmailTemplate(sensorData, level) {
   const color =
     level === "CRITICAL"
@@ -62,7 +52,7 @@ function alertEmailTemplate(sensorData, level) {
                 <table width="100%" cellpadding="6">
                   <tr>
                     <td><b>Flame Percentage:</b></td>
-                    <td>${sensorData.flame}</td>
+                    <td>${sensorData.flame}&nbsp;%</td>
                   </tr>
                   <tr>
                     <td><b>Temperature:</b></td>
@@ -104,10 +94,14 @@ export const sendEmailAlert = async (deviceId, sensorData) => {
     name: "FireGuard Alerts",
   };
 
+  const snapshot = await db.doc(`devices/${deviceId}`).get()
+  const userId = snapshot.data().userId;
+  const recipents = (await db.doc(`users/${userId}`).get()).data().email;
+  
   try {
-    const info = await transport.sendMail({
+    const info = transport.sendMail({
         from: sender,
-        to: "viduydmm@gmail.com",
+        to: recipents,
         subject: "Fire Alert",
         html: alertEmailTemplate(sensorData, "CRITICAL"),
     }); 
