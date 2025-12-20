@@ -12,8 +12,6 @@ export const LightController = {
       return res.status(400).json({ error: 'Invalid state. Use ON or OFF.' });
     }
 
-    //const authLightTopic = `${lightTopic}/${req.user.uid}`
-
     client.publish(lightTopic, state, (err) => {
       if (err) {
         console.log("Light Controller error: ", err);

@@ -60,7 +60,7 @@ const SensorLogsList = () => {
   const [flameData, setFlameData] = useState([]);
   const [smokeData, setSmokeData] = useState([]);
   const [tempData, setTempData] = useState([]);
-  const limit = 7;
+  const limit = 10;
   useEffect(() => {
     let activeEventSource = null;
 
@@ -87,15 +87,15 @@ const SensorLogsList = () => {
           setFlameData((prev) => [
             ...prev,
             { x: data.timestamp, y: data.sensorsData?.flame },
-          ]);
+          ].slice(-limit));
           setSmokeData((prev) => [
             ...prev,
             { x: data.timestamp, y: data.sensorsData?.smoke },
-          ]);
+          ].slice(-limit));
           setTempData((prev) => [
             ...prev,
             { x: data.timestamp, y: data.sensorsData?.temperature },
-          ]);
+          ].slice(-limit));
         };
 
         activeEventSource.onerror = (err) => {
@@ -132,23 +132,20 @@ const SensorLogsList = () => {
       {
         label: "Flame (%)",
         data: normalizedFlame,
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-        tension: 0.2,
+        borderColor: "#E53935",
+        backgroundColor: "rgba(229, 57, 53, 0.25)",
       },
       {
         label: "Smoke",
         data: normalizedSmoke,
-        borderColor: "rgb(46, 204, 113)",
-        backgroundColor: "rgba(46, 204, 113, 0.5)",
-        tension: 0.2,
+        borderColor: "#616161",
+        backgroundColor: "rgba(97, 97, 97, 0.25)",
       },
       {
-        label: "Temperature (Celcius)",
+        label: "Temperature (°C)",
         data: normalizedTemperature,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-        tension: 0.2,
+        borderColor: "#FB8C00",
+        backgroundColor: "rgba(251, 140, 0, 0.25)",
       },
     ],
   };
@@ -157,11 +154,11 @@ const SensorLogsList = () => {
     responsive: true,
     scales: {
       x: {
-        type: "time", // CRITICAL: Use time scale, not category
+        type: "time",
         time: {
-          unit: "day", // Force the major ticks to be Days
+          unit: "second",
           displayFormats: {
-            day: "EEEE", // Format code for "Monday", "Tuesday", etc.
+            second: "EEE, HH:mm:ss",
           },
         },
         ticks: {

@@ -28,21 +28,9 @@ export const MqttService = {
     };
 
     client.on('message', handleMessage);
-    // const id = setInterval(async () => {
-    //   const data = await loadSensorData("1");
-    //   const mockData = {
-    //     deviceId: data.deviceId,
-    //     triggerType: data["0"].triggerType,
-    //     timestamp: new Date(data["0"].timestamp),
-    //     sensorsData: data["0"].sensorsData
-    //   }
-    //   onData(mockData);
-    //   console.log(mockData)
-    // }, 10000);
 
     return () => {
       client.removeListener('message', handleMessage);
-      // clearInterval(id);
     }
   },
 };

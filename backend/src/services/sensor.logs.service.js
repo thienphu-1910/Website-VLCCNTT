@@ -10,9 +10,12 @@ export const saveSensorLog = async ({deviceId, triggerType, sensorsData}) => {
   const collectionRef = db.collection(`${path.root}/${deviceId}/sensorLogs`);
   const snapshot = await collectionRef.get();
   const length = snapshot.size;
+  if (length < 9) {
+    length = `0${length + 1}`;
+  }
   await db
     .collection(`${path.root}/${deviceId}/sensorLogs`)
-    .doc(`${length + 1}`)
+    .doc(`${length}`)
     .set({
       ...sensorsData,
       timestamp: timestamp.toISOString(),
@@ -25,28 +28,13 @@ export const saveSensorData = async () => {
     const saveData = async (data) => {
       const { deviceId, triggerType, ...sensorsData } = data;
       await saveSensorLog({deviceId, triggerType, sensorsData});
-    }
+    };
 
     MqttService.subscribeToTopic(saveData);
   } catch (err) {
     console.log("Save sensor Data error: ", err.message);
   }
 }
-
-// export const saveSensorData = async (deviceId, trigger, sensorsData) => {
-//   try {
-//     await saveSensorLog({
-//       deviceId: deviceId,
-//       trigger: trigger,
-//       sensorsData: sensorsData
-//     });
-//     console.log("Saved to Firestore.");
-//     return true;
-//   } catch (e) {
-//     console.log(`Error: ${e.message}.`);
-//     return false;
-//   }
-// }
 
 export const loadSensorLog = async ({deviceId}) => {
   const snapshot = await db
