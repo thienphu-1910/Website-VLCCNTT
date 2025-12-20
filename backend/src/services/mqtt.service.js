@@ -16,6 +16,7 @@ export const MqttService = {
       }
     };
 
+    client.on('message', handleMessage);
     // const id = setInterval(async () => {
     //   const data = await loadSensorData("1");
     //   const mockData = {
