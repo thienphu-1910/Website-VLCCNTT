@@ -31,7 +31,7 @@ export const MqttService = {
 
     return () => {
       client.removeListener('message', handleMessage);
-      clearInterval(id);
+      //clearInterval(id);
     }
   },
 };

@@ -25,7 +25,7 @@ export const saveSensorData = async () => {
   try {
     const saveData = async (data) => {
       const { deviceID, triggerType, ...sensorsData } = data;
-      await saveSensorLog(deviceID, triggerType, sensorsData);
+      await saveSensorLog({deviceID, triggerType, sensorsData});
     }
 
     MqttService.subscribeToTopic(saveData);
