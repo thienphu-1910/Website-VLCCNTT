@@ -25,7 +25,3 @@ int SmokeSensor::getSensorValue() {
     _sensor_value = value;
     return value;
 }
-
-bool SmokeSensor::hasSmoke() {
-    return _sensor_value;
-}

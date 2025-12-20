@@ -4,6 +4,7 @@
 #include "driver/gpio.h"
 
 typedef struct {
+    int threshold;
     gpio_num_t pin;
 } smoke_sensor_config_t;
 
@@ -16,7 +17,6 @@ private:
 public:
     SmokeSensor(smoke_sensor_config_t *config);
     int getSensorValue();
-    bool hasSmoke();
 };
 
 #endif

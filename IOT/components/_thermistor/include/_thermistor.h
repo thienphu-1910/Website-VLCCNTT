@@ -5,6 +5,7 @@
 #include "esp_adc/adc_oneshot.h"
 
 typedef struct {
+    int threshold;
     adc_unit_t unit;
     adc_atten_t atten;
     adc_channel_t channel;

@@ -42,8 +42,8 @@ void MQTTClient::data(const char* data) {
     _config.data = data;
 }
 
-const char* MQTTClient::getData() {
-    return _config.data;
+const char* MQTTClient::getTag() {
+    return TAG;
 }
 
 void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_t event_id, void *event_data) {

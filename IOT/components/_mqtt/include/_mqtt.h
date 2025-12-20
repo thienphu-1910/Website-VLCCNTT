@@ -30,7 +30,7 @@ public:
     ~MQTTClient();
     bool publish();
     void data(const char* data);
-    const char* getData();
+    const char* getTag();
 
     static void mqtt_event_handler(void* hanlder_args, esp_event_base_t base, int32_t event_id, void *event_data);
 };

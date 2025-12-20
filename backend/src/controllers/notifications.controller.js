@@ -2,10 +2,14 @@ import { sendPushNotifications } from "../config/pushsafer.js";
 import { saveSensorData } from "../services/sensor.logs.service.js";
 import { sendEmailAlert } from "../config/mailer.js";
 
+const FLAME_THRESHOLD = Number(process.env.FLAME_THRESHOLD) || 10;
+const SMOKE_THRESHOLD = Number(process.env.SMOKE_THRESHOLD) || 1;
+const TEMPERATURE_THRESHOLD = Number(process.env.TEMPERATURE_THRESHOLD) || 50;
+
 const THRESHOLDS = {
-  temperature: { max: 50, label: "Temperature High" },
-  smoke: { max: 1, label: "Smoke Detected" },
-  flame: { max: 10, label: "Flame Detected" },
+  temperature: { max: TEMPERATURE_THRESHOLD, label: "Temperature High" },
+  smoke: { max: SMOKE_THRESHOLD, label: "Smoke Detected" },
+  flame: { max: FLAME_THRESHOLD, label: "Flame Detected" },
 };
 const targetTopic = process.env.MQTT_TOPIC || "";
 const deviceId = process.env.DEVICE_ID || ""; // Push Notification device
