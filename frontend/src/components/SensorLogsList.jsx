@@ -25,7 +25,6 @@ import {
 import { Line } from "react-chartjs-2";
 import "chartjs-adapter-date-fns"; // Import the adapter!
 import { useMemo } from "react";
-import { limit } from "firebase/firestore";
 
 // Register the TimeScale
 ChartJS.register(

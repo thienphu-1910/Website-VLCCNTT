@@ -19,7 +19,7 @@ Thermistor::Thermistor(const thermistor_config_t *config, adc_oneshot_unit_handl
     ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc_handle, config->channel, &chan_config));
 
     adc_cali_line_fitting_config_t cali_config = {
-        .unit_id = ADC_UNIT_1,
+        .unit_id = config->unit,
         .atten = config->atten,
         .bitwidth = ADC_BITWIDTH_12,
     };

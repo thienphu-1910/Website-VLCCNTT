@@ -9,24 +9,24 @@ export const MqttService = {
     const handleMessage = (topic, message) => {
       if (!topic || topic !== target_topic) return;
       try {
-        const raw_data = JSON.parse(message.toString());
-        onData(raw_data);
+        const rawData = JSON.parse(message.toString());
+        onData(rawData);
       } catch (err) {
         console.log("Subscribe to topic error: ", err.message);
       }
     };
 
-    const id = setInterval(async () => {
-      const data = await loadSensorData("1");
-      const mockData = {
-        deviceId: data.deviceId,
-        triggerType: data["0"].trigger,
-        timestamp: new Date(data["0"].timestamp),
-        sensorsData: data["0"].sensorsData
-      }
-      onData(mockData);
-      console.log(mockData)
-    }, 1000);
+    // const id = setInterval(async () => {
+    //   const data = await loadSensorData("1");
+    //   const mockData = {
+    //     deviceId: data.deviceId,
+    //     triggerType: data["0"].trigger,
+    //     timestamp: new Date(data["0"].timestamp),
+    //     sensorsData: data["0"].sensorsData
+    //   }
+    //   onData(mockData);
+    //   console.log(mockData)
+    // }, 1000000);
 
     return () => {
       client.removeListener('message', handleMessage);
