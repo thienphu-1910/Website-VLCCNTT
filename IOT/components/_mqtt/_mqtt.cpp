@@ -93,6 +93,10 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
                     light_trigger = 1;
                     ESP_LOGI(TAG, "Light Triggered ON");
                 }
+                if (event->data_len == 3 && strncmp(event->data, "OFF", 3) == 0) {
+                    light_trigger = 0;
+                    ESP_LOGI(TAG, "Light Triggered ON");
+                }
             } 
             
             const char *topic_buzzer = "fire_alarm/nhom7/buzzer";
@@ -101,6 +105,10 @@ void MQTTClient::mqtt_event_handler(void* handler, esp_event_base_t base, int32_
                 
                 if (event->data_len == 2 && strncmp(event->data, "ON", 2) == 0) {
                     buzzer_trigger = 1;
+                    ESP_LOGI(TAG, "Buzzer Triggered ON");
+                }
+                if (event->data_len == 3 && strncmp(event->data, "OFF", 3) == 0) {
+                    buzzer_trigger = 0;
                     ESP_LOGI(TAG, "Buzzer Triggered ON");
                 }
             }

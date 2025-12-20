@@ -63,16 +63,12 @@ void app_main(void) {
         }
 
         if (buzzer_trigger == 1) {
-            buzzer.beep();
-            mqtt_client.buzzer_trigger = 0;
-
+            buzzer.beep();            
             trigger_type = 1;
         }
 
         if (light_trigger == 1) {
-            led.blink();
-            mqtt_client.light_trigger = 0;
-
+            led.blink();            
             trigger_type = 1;
         }
 
