@@ -2,18 +2,17 @@ import { db } from "../config/firebaseAdmin.js";
 import { MqttService } from "./mqtt.service.js";
 
 const path = {
-  root: "users",
-  subcollection: "devices"
+  root: "devices"
 };
 
 export const saveSensorLog = async ({deviceId, trigger, sensorsData}) => {
   const timestamp = new Date();
-  const collectionRef = db.collection(`${path.root}/${userId}/${path.subcollection}/${deviceId}/sensorLogs`);
+  const collectionRef = db.collection(`${path.root}/${deviceId}/sensorLogs`);
   const snapshot = await collectionRef.get();
   const length = snapshot.size();
   console.log(length);
   await db
-    .collection(`${path.root}/${userId}/${path.subcollection}/${deviceId}/sensorLogs`)
+    .collection(`${path.root}/${deviceId}/sensorLogs`)
     .doc(`${length + 1}`)
     .set({
       ...sensorsData,
@@ -22,7 +21,7 @@ export const saveSensorLog = async ({deviceId, trigger, sensorsData}) => {
     });
 }
 
-export const saveSensorData = () => {
+export const saveSensorData = async () => {
   try {
     const saveData = async (data) => {
       const { deviceID, triggerType, ...sensorsData } = data;
@@ -52,7 +51,8 @@ export const saveSensorData = () => {
 
 export const loadSensorLog = async ({deviceId}) => {
   const snapshot = await db
-    .collection(`${path.root}/device${deviceId}/${path.collection}`)
+    .collection(`${path.root}/${deviceId}/sensorLogs`)
+    .orderBy("timestamp", "desc")
     .limit(10)
     .get();
   return snapshot;
@@ -64,10 +64,18 @@ export const loadSensorData = async (deviceId) => {
       deviceId: deviceId
     });
     const data = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      timestamp: doc.data().timestamp.toDate().toISOString(),
+      trigger: doc.data().trigger,
+      sensorsData: {
+        flame: doc.data().flame,
+        temperature: doc.data().temperature,
+        smoke: doc.data().smoke,
+      },
     }));
-    return data;
+    return {
+      deviceId: deviceId,
+      ...data
+    };
   } catch (e) {
     console.log(`Error: ${e.message}.`);
     return {};

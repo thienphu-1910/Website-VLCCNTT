@@ -1,11 +1,13 @@
+import { raw } from "express";
 import { client } from "../config/mqtt.js";
+import { loadSensorData } from "./sensor.logs.service.js";
 
 const target_topic = process.env.MQTT_TOPIC || '';
 
 export const MqttService = {
   subscribeToTopic: (onData) => {
     const handleMessage = (topic, message) => {
-      if (!topic && topic !== target_topic) return;
+      if (!topic || topic !== target_topic) return;
       try {
         const raw_data = JSON.parse(message.toString());
         onData(raw_data);
@@ -14,16 +16,16 @@ export const MqttService = {
       }
     };
 
-    const id = setInterval(() => {
+    const id = setInterval(async () => {
+      const data = await loadSensorData("1");
       const mockData = {
-        deviceID: 1,
-        triggerType: Math.floor(Math.random() * 2) ,
-        flame_percentage: Math.floor(Math.random() * 100), 
-        smoke: Math.floor(Math.random() * 100),
-        temperature: Math.floor(Math.random() * 50),
-      };
-      //console.log("Send Data");
+        deviceId: data.deviceId,
+        triggerType: data["0"].trigger,
+        timestamp: new Date(data["0"].timestamp),
+        sensorsData: data["0"].sensorsData
+      }
       onData(mockData);
+      console.log(mockData)
     }, 1000);
 
     return () => {

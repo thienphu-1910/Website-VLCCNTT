@@ -20,11 +20,12 @@ import {
   Title,
   Tooltip,
   Legend,
-  TimeScale // Import TimeScale
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import 'chartjs-adapter-date-fns'; // Import the adapter!
+  TimeScale, // Import TimeScale
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import "chartjs-adapter-date-fns"; // Import the adapter!
 import { useMemo } from "react";
+import { limit } from "firebase/firestore";
 
 // Register the TimeScale
 ChartJS.register(
@@ -38,13 +39,29 @@ ChartJS.register(
   TimeScale
 );
 
+const normalizedSensorData = (data) => {
+  if (!data || data.length === 0) return [];
+
+  const values = data.map((d) => Number(d.y));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+
+  if (min === max) {
+    return data.map((d) => ({ ...d, y: 0.5 }));
+  }
+
+  return data.map((d) => ({
+    ...d,
+    y: (d.y - min) / (max - min),
+  }));
+};
 
 const SensorLogsList = () => {
   const [deviceLogs, setDeviceLogs] = useState([]);
   const [flameData, setFlameData] = useState([]);
   const [smokeData, setSmokeData] = useState([]);
   const [tempData, setTempData] = useState([]);
-
+  const limit = 7;
   useEffect(() => {
     let activeEventSource = null;
 
@@ -55,20 +72,31 @@ const SensorLogsList = () => {
 
       if (user) {
         console.log("User authenticated, starting SSE stream...");
-        
-        activeEventSource = new EventSource(`${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`);
-        console.log(`${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`)
+
+        activeEventSource = new EventSource(
+          `${import.meta.env.VITE_API_URL}/sensorlogs/events/${1}`
+        );
 
         activeEventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          console.log(data);
+
           // Update all states
-          setDeviceLogs((prev) => [...prev, data]);
-          
-          {/* x, y format where x stands for timestamp (ISO string) and y stands for specified sensor value */}
-          setFlameData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.flame_percentage }]);
-          setSmokeData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.smoke }]);
-          setTempData((prev) => [...prev, { x: data.timestamp, y: data.sensorData.temperature }]);
+          setDeviceLogs((prev) => [...prev, data].slice(-limit));
+
+        
+          /* x, y format where x stands for timestamp (ISO string) and y stands for specified sensor value */
+          setFlameData((prev) => [
+            ...prev,
+            { x: data.timestamp, y: data.sensorsData.flame },
+          ]);
+          setSmokeData((prev) => [
+            ...prev,
+            { x: data.timestamp, y: data.sensorsData.smoke },
+          ]);
+          setTempData((prev) => [
+            ...prev,
+            { x: data.timestamp, y: data.sensorsData.temperature },
+          ]);
         };
 
         activeEventSource.onerror = (err) => {
@@ -89,153 +117,76 @@ const SensorLogsList = () => {
   }, []);
 
   const normalizedFlame = useMemo(() => {
-    const min = flameData.reduce((min, current) => {
-      return current.y < min.y ? current : min;
-    }, flameData[0]);
-    const max = flameData.reduce((max, current) => {
-      return current.y > max.y ? current : max;
-    }, flameData[0]);
-
-    return flameData.map((d) => {
-      return {
-        ...d,
-        y: (d.y - min.y) / (max.y - min.y),
-      }
-    });
+    return normalizedSensorData(flameData);
   }, [flameData]);
 
   const normalizedSmoke = useMemo(() => {
-    const min = smokeData.reduce((min, current) => {
-      return current.y < min.y ? current : min;
-    }, smokeData[0]);
-    const max = smokeData.reduce((max, current) => {
-      return current.y > max.y ? current : max;
-    }, smokeData[0]);
-
-    return smokeData.map((d) => {
-      return {
-        ...d,
-        y: (d.y - min.y) / (max.y - min.y),
-      }
-    });
+    return normalizedSensorData(smokeData);
   }, [smokeData]);
 
   const normalizedTemperature = useMemo(() => {
-    const min = tempData.reduce((min, current) => {
-      return current.y < min.y ? current : min;
-    }, tempData[0]);
-    const max = tempData.reduce((max, current) => {
-      return current.y > max.y ? current : max;
-    }, tempData[0]);
-
-    return tempData.map((d) => {
-      return {
-        ...d,
-        y: (d.y - min.y) / (max.y - min.y),
-      }
-    });
+    return normalizedSensorData(tempData);
   }, [tempData]);
 
   const data = {
     datasets: [
       {
-        label: "Flame Percentage",
+        label: "Flame (Percentage)",
         data: normalizedFlame,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        tension: 0.2,
       },
       {
         label: "Smoke",
         data: normalizedSmoke,
-        borderColor: 'rgb(46, 204, 113)',
-        backgroundColor: 'rgba(46, 204, 113, 0.5)',
+        borderColor: "rgb(46, 204, 113)",
+        backgroundColor: "rgba(46, 204, 113, 0.5)",
+        tension: 0.2,
       },
       {
         label: "Temperature (Celcius)",
         data: normalizedTemperature,
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      }
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        tension: 0.2,
+      },
     ],
-  }
+  };
 
-
-const options = {
+  const options = {
     responsive: true,
     scales: {
       x: {
-        type: 'time', // CRITICAL: Use time scale, not category
+        type: "time", // CRITICAL: Use time scale, not category
         time: {
-          unit: 'day', // Force the major ticks to be Days
+          unit: "day", // Force the major ticks to be Days
           displayFormats: {
-            day: 'EEEE' // Format code for "Monday", "Tuesday", etc.
-          }
+            day: "EEEE", // Format code for "Monday", "Tuesday", etc.
+          },
         },
-        title: {
-          display: true,
-          text: 'Time of Week'
+        ticks: {
+          source: "data",
         }
       },
       y: {
-        beginAtZero: true
-      }
-    }
+        beginAtZero: true,
+      },
+    },
+    maintainAspectRatio: false,
   };
 
   return (
-    <>
-    <Line options={options} data={data} />
-    </>
-  )
- }
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "90vw",
+        height: "60vh", // scale theo chiều cao màn hình
+      }}
+    >
+      <Line options={options} data={data} />
+    </div>
+  );
+};
 
 export default SensorLogsList;
-
-
-
-
-// const data = {
-//     datasets: [
-//       {
-//         label: "Flame Percentage",
-//         data: flameData,
-//         borderColor: 'rgb(255, 99, 132)',
-//         backgroundColor: 'rgba(255, 99, 132, 0.5)',
-//       },
-//       {
-//         label: "Smoke",
-//         data: smokeData,
-//         borderColor: 'rgb(46, 204, 113)',
-//         backgroundColor: 'rgba(46, 204, 113, 0.5)',
-//       },
-//       {
-//         label: "Temperature (Celcius)",
-//         data: tempData,
-//         borderColor: 'rgb(53, 162, 235)',
-//         backgroundColor: 'rgba(53, 162, 235, 0.5)',
-//       }
-//     ],
-//   }
-
-
-// const options = {
-//     responsive: true,
-//     scales: {
-//       x: {
-//         type: 'time', // CRITICAL: Use time scale, not category
-//         time: {
-//           unit: 'day', // Force the major ticks to be Days
-//           displayFormats: {
-//             day: 'EEEE' // Format code for "Monday", "Tuesday", etc.
-//           }
-//         },
-//         title: {
-//           display: true,
-//           text: 'Time of Week'
-//         }
-//       },
-//       y: {
-//         beginAtZero: true
-//       }
-//     }
-//   };

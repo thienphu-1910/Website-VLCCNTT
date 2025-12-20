@@ -3,8 +3,7 @@ import { MqttService } from "../services/mqtt.service.js";
 
 // collection path: devices/device001/sensorLogs/timestamp
 const path = {
-  root: "users",
-  subcollection: "devices",
+  root: "devices",
 };
 
 export const SensorLogsController = {
@@ -61,7 +60,7 @@ export const SensorLogsController = {
       res.status(500).json({ message: e.message });
     }
   },
-  // api/sensorLogs/events
+  // api/sensorlogs/events
   getRealTimeRecord: (req, res) => {
     try {
       res.setHeader("Content-Type", "text/event-stream");
@@ -70,12 +69,12 @@ export const SensorLogsController = {
       res.flushHeaders();
 
       const handleData = (data) => {
-        const { deviceID, triggerType, ...sensorData } = data;
-        if (String(deviceID) === req.params.id) {
+        const { deviceId, trigger, timestamp, sensorsData} = data;
+        if (String(deviceId) === req.params.id) {
           const payload = {
-            triggerType: triggerType,
-            timestamp: (new Date()).toISOString(),
-            sensorData: sensorData,
+            triggerType: trigger,
+            timestamp: timestamp,
+            sensorsData: sensorsData,
           };
           res.write(`data: ${JSON.stringify(payload)}\n\n`);
         }

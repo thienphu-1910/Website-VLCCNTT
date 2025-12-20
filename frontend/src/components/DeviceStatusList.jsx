@@ -56,7 +56,7 @@ const DeviceStatusList = ({ className = "" }) => {
         eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
           console.log(data)
-          setDeviceIndicator(data.sensorData);
+          setDeviceIndicator(data.sensorsData);
         }
 
       } else {
@@ -118,15 +118,15 @@ const DeviceStatusList = ({ className = "" }) => {
         </section>
         <div className="px-3 py-1 rounded-full flex flex-col gap-2 justify-center items-start">
           <p className="text-2xl text-blue-500">
-            {deviceIndicator?.flame_percentage || ""}{" "}
+            {deviceIndicator?.flame || ""}{" "}
             <span className="text-base text-gray-500">%</span>
           </p>
           <div className="w-full h-2 bg-gray-400/40 rounded-full">
             <div
               style={{
-                width: `${deviceIndicator?.flame_percentage || 0}%`,
+                width: `${deviceIndicator?.flame || 0}%`,
                 backgroundSize: `${
-                  100 * (100 / `${deviceIndicator?.flame_percentage || 0}`)
+                  100 * (100 / `${deviceIndicator?.flame || 0}`)
                 }% 100%`,
               }}
               className="h-2 bg-linear-to-r from-green-400 from-30% via-yellow-300 via-55% to-red-500 to-100% rounded-full"

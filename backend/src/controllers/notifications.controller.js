@@ -11,7 +11,7 @@ const targetTopic = process.env.MQTT_TOPIC || "";
 const deviceId = process.env.DEVICE_ID || ""; // Push Notification device
 
 export const handleIncoming = async (topic, buffer) => {
-  if (topic != targetTopic) {
+  if (topic !== targetTopic) {
     return;
   }
   try {
