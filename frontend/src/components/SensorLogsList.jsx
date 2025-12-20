@@ -86,15 +86,15 @@ const SensorLogsList = () => {
           /* x, y format where x stands for timestamp (ISO string) and y stands for specified sensor value */
           setFlameData((prev) => [
             ...prev,
-            { x: data.timestamp, y: data.sensorsData.flame },
+            { x: data.timestamp, y: data.sensorsData?.flame },
           ]);
           setSmokeData((prev) => [
             ...prev,
-            { x: data.timestamp, y: data.sensorsData.smoke },
+            { x: data.timestamp, y: data.sensorsData?.smoke },
           ]);
           setTempData((prev) => [
             ...prev,
-            { x: data.timestamp, y: data.sensorsData.temperature },
+            { x: data.timestamp, y: data.sensorsData?.temperature },
           ]);
         };
 

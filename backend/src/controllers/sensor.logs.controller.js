@@ -69,10 +69,10 @@ export const SensorLogsController = {
       res.flushHeaders();
 
       const handleData = (data) => {
-        const { deviceId, trigger, timestamp, sensorsData} = data;
+        const { deviceId, triggerType, timestamp, sensorsData} = data;
         if (String(deviceId) === req.params.id) {
           const payload = {
-            triggerType: trigger,
+            triggerType: triggerType,
             timestamp: timestamp,
             sensorsData: sensorsData,
           };

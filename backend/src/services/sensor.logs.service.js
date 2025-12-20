@@ -5,27 +5,26 @@ const path = {
   root: "devices"
 };
 
-export const saveSensorLog = async ({deviceId, trigger, sensorsData}) => {
+export const saveSensorLog = async ({deviceId, triggerType, sensorsData}) => {
   const timestamp = new Date();
   const collectionRef = db.collection(`${path.root}/${deviceId}/sensorLogs`);
   const snapshot = await collectionRef.get();
-  const length = snapshot.size();
-  console.log(length);
+  const length = snapshot.size;
   await db
     .collection(`${path.root}/${deviceId}/sensorLogs`)
     .doc(`${length + 1}`)
     .set({
       ...sensorsData,
       timestamp: timestamp.toISOString(),
-      trigger: trigger
+      trigger: triggerType
     });
 }
 
 export const saveSensorData = async () => {
   try {
     const saveData = async (data) => {
-      const { deviceID, triggerType, ...sensorsData } = data;
-      await saveSensorLog({deviceID, triggerType, sensorsData});
+      const { deviceId, triggerType, ...sensorsData } = data;
+      await saveSensorLog({deviceId, triggerType, sensorsData});
     }
 
     MqttService.subscribeToTopic(saveData);

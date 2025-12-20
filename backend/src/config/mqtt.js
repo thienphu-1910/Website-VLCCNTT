@@ -17,6 +17,8 @@ const option = {
 
 const client = mqtt.connect(`mqtts://${brokerUrl}`, option);
 
+client.setMaxListeners(0);
+
 client.on("error", (error) => {
     console.error("MQTT Error: ", error.message);
     client.end();
