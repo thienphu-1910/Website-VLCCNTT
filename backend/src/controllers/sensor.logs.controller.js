@@ -40,7 +40,7 @@ export const SensorLogsController = {
 
       const handleData = (data) => {
         const { deviceId, triggerType, timestamp, sensorsData} = data;
-        if (String(deviceId) === req.params.id) {
+        if (String(deviceId) === String(req.params.id)) {
           const payload = {
             triggerType: triggerType,
             timestamp: timestamp,
@@ -53,8 +53,9 @@ export const SensorLogsController = {
 
       req.on('close', () => {
         console.log("Client close connection!");
+        res.end();
       });
-    } catch {
+    } catch (e) {
       res.status(500).json({ message: e.message });
     }
   },
