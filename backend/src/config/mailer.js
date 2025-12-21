@@ -94,14 +94,14 @@ export const sendEmailAlert = async (deviceId, sensorData) => {
     name: "FireGuard Alerts",
   };
 
-  const snapshot = await db.doc(`devices/${deviceId}`).get()
+  const snapshot = await db.doc(`devices/${deviceId}`).get();
   const userId = snapshot.data().userId;
-  const recipents = (await db.doc(`users/${userId}`).get()).data().email;
+  const recipients = (await db.doc(`users/${userId}`).get()).data().email;
   
   try {
     const info = transport.sendMail({
         from: sender,
-        to: recipents,
+        to: recipients,
         subject: "Fire Alert",
         html: alertEmailTemplate(sensorData, "CRITICAL"),
     }); 

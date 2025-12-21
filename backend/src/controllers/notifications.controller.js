@@ -12,7 +12,7 @@ const THRESHOLDS = {
   flame: { max: FLAME_THRESHOLD, label: "Flame Detected" },
 };
 const targetTopic = process.env.MQTT_TOPIC || "";
-const deviceId = process.env.DEVICE_ID || ""; // Push Notification device
+const pnDeviceId = process.env.DEVICE_ID || ""; // Push Notification device
 
 export const handleIncoming = async (topic, buffer) => {
   if (topic !== targetTopic) {
@@ -20,7 +20,7 @@ export const handleIncoming = async (topic, buffer) => {
   }
   try {
     const payload = JSON.parse(buffer.toString());
-    const { userDeviceId, triggerType, ...sensorData } = payload;
+    const { deviceId, triggerType, ...sensorData } = payload;
 
     const alerts = [];
 
@@ -35,14 +35,14 @@ export const handleIncoming = async (topic, buffer) => {
     }
 
     if (alerts.length > 0) {
-      const title = `Device ${deviceId}`;
+      const title = `Device ${pnDeviceId}`;
       const msg = alerts.join("\n");
 
-      await sendPushNotifications(msg, title, deviceId);
-      await sendEmailAlert(userDeviceId, sensorData);
+      await sendPushNotifications(msg, title, pnDeviceId);
+      await sendEmailAlert(deviceId, sensorData);
     }
 
-    await saveSensorData(userDeviceId, triggerType, sensorData);
+    await saveSensorData(deviceId, triggerType, sensorData);
   } catch (e) {
     console.error("Error: ", e);
   }
