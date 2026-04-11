@@ -1,0 +1,1 @@
+run: npx json-server mockData.json

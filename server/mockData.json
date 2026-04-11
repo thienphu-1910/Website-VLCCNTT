@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "device_id": 1,
+      "name": "ViDuyDmm",
+      "email": "viduydmm@gmail.com", 
+      "avatar_url": "public/images/user1_avatar.jpeg"
+    },
+    {
+      "id": 2,
+      "device_id": 2,
+      "name": "khoidmmm",
+      "email": "mikhoidmm@gmail.com",
+      "avatar_url": "public/images/user2_avatar.jpeg"
+    }
+  ],
+  "devices": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "system_status": 0,
+      "flame_percentage": 30,
+      "temperature": 30,
+      "smoke_status": 0,
+      "sounds": [
+        "Sound A", "Sound B", "Sound C"
+      ],
+      "tips": [
+        "Abcd", "bcdef"
+      ]
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "system_status": 0,
+      "flame_percentage": 50,
+      "temperature": 30,
+      "smoke_status": 0,
+      "sounds": [
+        "Sound A", "Sound B", "Sound C"
+      ],
+      "tips": [
+        "Abcd", "bcdef"
+      ]
+    }
+  ]  
+}

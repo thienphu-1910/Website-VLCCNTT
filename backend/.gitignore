@@ -1,0 +1,4 @@
+node_modules/
+serviceAdminKey.json
+src/config/seed.js
+.env
